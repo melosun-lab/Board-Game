@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'users'
 ]
 
-GRAPHEN = {
+GRAPHENE = {
     'SCHEMA': 'backend.schema.schema'
 }
 
