@@ -38,5 +38,34 @@ class CreateUser(graphene.Mutation):
         user.save()
         return CreateUser(user=user)
 
+class UpdateUser(graphene.Mutation):
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        id = graphene.Int(required=True)
+        username = graphene.String()
+        password = graphene.String()
+        nickname = graphene.String()
+        friends = graphene.String()
+    
+    def mutate(self, info, id, username, password, nickname, friends):
+        user = get_user_model().objects.get(id=id)
+
+        if user != info.context.user:
+            raise Exception('Not permitted to update this user.')
+
+        user.username = username
+        user.set_password(password)
+        user.nickname = nickname
+        user.friends = friends
+
+        user.save()
+
+        return UpdateUser(user=user)
+
+
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
+    update_user = UpdateUser.Field()
