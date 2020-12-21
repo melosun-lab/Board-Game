@@ -48,16 +48,20 @@ class UpdateUser(graphene.Mutation):
         nickname = graphene.String()
         friends = graphene.String()
     
-    def mutate(self, info, id, username, password, nickname, friends):
+    def mutate(self, info, id, username=None, password=None, nickname=None, friends=None):
         user = get_user_model().objects.get(id=id)
 
         if user != info.context.user:
             raise Exception('Not permitted to update this user.')
 
-        user.username = username
-        user.set_password(password)
-        user.nickname = nickname
-        user.friends = friends
+        if username:
+            user.username = username
+        if password:
+            user.set_password(password)
+        if nickname:
+            user.nickname = nickname
+        if friends:
+            user.friends = friends
 
         user.save()
 
