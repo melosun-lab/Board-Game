@@ -7,11 +7,7 @@ class UserType(DjangoObjectType):
         model = User
 
 class Query(graphene.ObjectType):
-    user = graphene.Field(UserType, id=graphene.Int(required=True))
     users = graphene.List(UserType)
-
-    def resolve_user(self,info, id):
-        return User.objects.get(id=id)
 
     def resolve_users(self,info):
         return User.objects.all()
