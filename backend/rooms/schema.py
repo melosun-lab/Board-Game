@@ -35,41 +35,44 @@ class UpdateRoom(graphene.Mutation):
     room = graphene.Field(RoomType)
 
     class Arguments:
-        room_id = graphene.Int(required = True)
+        id = graphene.Int(required = True)
         capacity = graphene.String()
         url = graphene.String()
         members = graphene.String()
 
-    def mutate(self, info, room_id, capacity, url, members):
+    def mutate(self, info, id, capacity=None, url=None, members=None):
         user =  info.context.user
-        room = Room.objects.get(id = room_id)
+        room = Room.objects.get(id = id)
 
         if room.owner != user:
             raise Exception("Not permitted to update this room.")
-        room.capacity = capacity
-        room.url = url
-        room.members = members
+        if capacity:
+            room.capacity = capacity
+        if url:
+            room.url = url
+        if members:
+            room.members = members
 
         room.save()
 
         return UpdateRoom(room = room)
 
 class DeleteRoom(graphene.Mutation):
-    room_id = graphene.Int()
+    id = graphene.Int()
 
     class Arguments:
         room_id = graphene.Int(required = True)
 
-    def mutate(self, info, room_id):
+    def mutate(self, info, id):
         user = info.context.user
-        room = Room.objects.get(id = room_id)
+        room = Room.objects.get(id = id)
 
         # if room.owner != user:
         #     raise Exception("Not permitted to delete this room.")
 
         room.delete()
 
-        return DeleteRoom(room_id = room_id)
+        return DeleteRoom(id = id)
 
 class Mutation(graphene.ObjectType):
     create_room = CreateRoom.Field()
