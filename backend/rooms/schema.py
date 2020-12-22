@@ -61,14 +61,14 @@ class DeleteRoom(graphene.Mutation):
     id = graphene.Int()
 
     class Arguments:
-        room_id = graphene.Int(required = True)
+        id = graphene.Int(required = True)
 
     def mutate(self, info, id):
         user = info.context.user
         room = Room.objects.get(id = id)
 
-        # if room.owner != user:
-        #     raise Exception("Not permitted to delete this room.")
+        if room.owner != user:
+            raise Exception("Not permitted to delete this room.")
 
         room.delete()
 
