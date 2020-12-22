@@ -64,8 +64,8 @@ class DeleteRoom(graphene.Mutation):
         user = info.context.user
         room = Room.objects.get(id = room_id)
 
-        # if room.owner != user:
-        #     raise Exception("Not permitted to delete this room.")
+        if room.owner != user:
+            raise Exception("Not permitted to delete this room.")
 
         room.delete()
 
