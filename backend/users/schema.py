@@ -67,9 +67,25 @@ class UpdateUser(graphene.Mutation):
 
         return UpdateUser(user=user)
 
+class DeleteUser(graphene.Mutation):
+    id = graphene.Int()
+
+    class Arguments:
+        id = graphene.Int(required=True)
+
+    def mutate(self, info, id):
+        user = get_user_model().objects.get(id=id)
+
+        if user != info.context.user:
+            raise Exception('Not permitted to delete this user.')
+        user.delete()
+
+        return DeleteUser(id=id)
+
 
 
 
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
+    delete_user = DeleteUser.Field()
