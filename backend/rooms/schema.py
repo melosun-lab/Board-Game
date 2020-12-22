@@ -1,8 +1,7 @@
 import graphene
-
 from graphene_django import DjangoObjectType
-
 from .models import Room
+from django.contrib.auth import get_user_model
 
 class RoomType(DjangoObjectType):
     class Meta:
@@ -25,11 +24,10 @@ class CreateRoom(graphene.Mutation):
     def mutate(self, info, capacity, url, members):
         user = info.context.user
 
-        # if user.is_anonymous:
-        #     raise Exception('Log in to create a room.')
+        if user.is_anonymous:
+            raise Exception('Log in to create a room.')
 
-
-        room = Room(capacity=capacity, url = url, members = "")
+        room = Room(capacity=capacity, url = url, members = "", owner = user)
         room.save()
         return CreateRoom(room=room)
 
@@ -46,8 +44,8 @@ class UpdateRoom(graphene.Mutation):
         user =  info.context.user
         room = Room.objects.get(id = room_id)
 
-        # if room.owner != user:
-        #     raise Exception("Not permitted to update this room.")
+        if room.owner != user:
+            raise Exception("Not permitted to update this room.")
         room.capacity = capacity
         room.url = url
         room.members = members
