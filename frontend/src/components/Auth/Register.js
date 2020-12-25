@@ -1,24 +1,96 @@
-import React from "react";
+import React, { useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-// import Typography from "@material-ui/core/Typography";
-// import Avatar from "@material-ui/core/Avatar";
-// import FormControl from "@material-ui/core/FormControl";
-// import Paper from "@material-ui/core/Paper";
-// import Input from "@material-ui/core/Input";
-// import InputLabel from "@material-ui/core/InputLabel";
-// import Button from "@material-ui/core/Button";
-// import Dialog from "@material-ui/core/Dialog";
-// import DialogActions from "@material-ui/core/DialogActions";
-// import DialogContent from "@material-ui/core/DialogContent";
-// import DialogContentText from "@material-ui/core/DialogContentText";
-// import DialogTitle from "@material-ui/core/DialogTitle";
-// import Slide from "@material-ui/core/Slide";
-// import Gavel from "@material-ui/icons/Gavel";
-// import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
+import { Mutation } from 'react-apollo';
+import { gql } from 'apollo-boost';
+import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
+import FormControl from "@material-ui/core/FormControl";
+import Paper from "@material-ui/core/Paper";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
+import Gavel from "@material-ui/icons/Gavel";
+import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 
 const Register = ({ classes }) => {
-  return <div>Register</div>;
+  const [username, setUsername] = useState("")
+  const [nickname, setNickname] = useState("")
+  const [password, setPassword] = useState("")
+  
+  return (
+  <div className = {classes.root}>
+    <Paper className = {classes.paper}>
+      <Avatar className = {classes.avatar}>
+        <Gavel />
+      </Avatar>  
+      <Typography variant = "headline">
+        Register
+      </Typography>
+      <Mutation mutation = {REGISTER_MUTATION}>
+        {() => {
+          return(
+            <form className = {classes.form}>
+              <FormControl margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "username">
+                  Username
+                </InputLabel>
+                <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
+              </FormControl>
+              <FormControl margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "nickname">
+                  Nickname
+                </InputLabel>
+                <Input id = "nickname" onChange = {event => setNickname(event.target.value)}/>
+              </FormControl>
+              <FormControl margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "password">
+                  Password
+                </InputLabel>
+                <Input id = "password" onChange = {event => setPassword(event.target.value)}/>
+              </FormControl>
+              <Button
+                type = "submit"
+                fullWidth
+                variant = "contained"
+                color = "secondary"
+                className = {classes.submit}>
+                  Register
+              </Button>
+              <Button
+                color = "primary"
+                variant = "outlined"
+                fullWidth
+              >
+                Previous user? Log in here
+              </Button>
+            </form>
+            
+          )
+        }
+        }
+      </Mutation> 
+    </Paper>
+  </div>
+    );
 };
+
+const REGISTER_MUTATION = gql`
+mutation ($username: String!, $nickname: String!, $password:String!){
+  createUser(username:$username, nickname:$nickname, password:$password){
+    user{
+      username
+      nickname
+      
+		}
+  }
+}
+`
 
 const styles = theme => ({
   root: {
