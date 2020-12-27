@@ -1,12 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Root from "./Root";
 import * as serviceWorker from "./serviceWorker";
 
 import {ApolloProvider, Query} from 'react-apollo';
 import ApolloClient, { gql } from 'apollo-boost';
-import Auth from "./components/Auth";
-
+import Root from "./Root";
+import Auth from './components/Auth';
 
 const client = new ApolloClient({
     uri: 'http://localhost:8000/graphql/',
