@@ -18,6 +18,7 @@ import Slide from "@material-ui/core/Slide";
 import Gavel from "@material-ui/icons/Gavel";
 import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 import { create } from "jss";
+import Error from "../Shared/Error"
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -99,35 +100,35 @@ const Register = ({ classes, setNewUser }) => {
                 Previous user? Log in here
               </Button>
               {/* Error Handling */}
-              {error && <div>Error</div>}
+              {error && <Error error={error}/>}
             </form>
           )
         }}
       </Mutation> 
     </Paper>
 
-    {/* Success Dialog */}
-    < Dialog
-      open={open}
-      disableBackdropClick={true}
-      TransitionComponent={Transition}
-    >
-      <DialogTitle>
-        <VerifiedUserTwoTone className={classes.icon} />
-        New Account
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          User {username} successfully created!
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button color="primary" variant="contained" onClick={() => setNewUser(false)}>
-          Login
-        </Button>
-      </DialogActions>
-    </Dialog>
-  </div>
+      {/* Success Dialog */}
+      < Dialog
+        open={open}
+        disableBackdropClick={true}
+        TransitionComponent={Transition}
+      >
+        <DialogTitle>
+          <VerifiedUserTwoTone className={classes.icon} />
+          New Account
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            User {username} successfully created!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" variant="contained" onClick={() => setNewUser(false)}>
+            Login
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
     );
 };
 
@@ -137,7 +138,6 @@ mutation ($username: String!, $nickname: String!, $password:String!){
     user{
       username
       nickname
-      
 		}
   }
 }
