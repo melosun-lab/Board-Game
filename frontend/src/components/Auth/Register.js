@@ -24,6 +24,12 @@ function Transition(props) {
   return <Slide direction="up" {...props} />
 }
 
+function GetRandomName() {
+  const first = firstNickname[Math.floor(Math.random() * firstNickname.length)]
+  const last = lastNickName[Math.floor(Math.random() * lastNickName.length)]
+  return first+last
+}
+
 const Register = ({ classes, setNewUser }) => {
   const [username, setUsername] = useState("")
   const [nickname, setNickname] = useState("")
@@ -36,68 +42,70 @@ const Register = ({ classes, setNewUser }) => {
   }
   
   return (
-    <div className = {classes.root}>
-      <Paper className = {classes.paper}>
-        <Avatar className = {classes.avatar}>
-          <Gavel />
-        </Avatar>  
-        <Typography variant = "headline">
-          Register
-        </Typography>
-        <Mutation 
-          mutation={REGISTER_MUTATION} 
-          variables={{ username, nickname, password }} 
-          onCompleted={data => {
-            console.log({ data })
-            setOpen(true)
-          }}
-        >
-          {(createUser, { loading, error }) => {
-            return(
-              <form onSubmit={event => handleSubmit(event, createUser)} className = {classes.form}>
-                <FormControl margin = "normal" required fullWidth>
-                  <InputLabel htmlFor = "username">
-                    Username
-                  </InputLabel>
-                  <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
-                </FormControl>
-                <FormControl margin = "normal" required fullWidth>
-                  <InputLabel htmlFor = "nickname">
-                    Nickname
-                  </InputLabel>
-                  <Input id = "nickname" onChange = {event => setNickname(event.target.value)}/>
-                </FormControl>
-                <FormControl margin = "normal" required fullWidth>
-                  <InputLabel htmlFor = "password">
-                    Password
-                  </InputLabel>
-                  <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)}/>
-                </FormControl>
-                <Button
-                  type = "submit"
-                  fullWidth
-                  variant = "contained"
-                  color = "secondary"
-                  disabled={loading || !username.trim() || !nickname.trim() || !password.trim()}
-                  className = {classes.submit}
-                >
-                    {loading ? "Registering..." : "Register"}
-                </Button>
-                <Button
-                  onClick={() => setNewUser(false)}
-                  color = "primary"
-                  variant = "outlined"
-                  fullWidth
-                >
-                  Previous user? Log in here
-                </Button>
-                {/* Error Handling */}
-                {error && <Error error={error} />}
-              </form>
-            )
-          }}
-        </Mutation> 
-      </Paper>
+  <div className = {classes.root}>
+    <Paper className = {classes.paper}>
+      <Avatar className = {classes.avatar}>
+        <Gavel />
+      </Avatar>  
+      <Typography variant = "headline">
+        Register
+      </Typography>
+      <Mutation 
+        mutation = {REGISTER_MUTATION} 
+        variables={{ username, nickname, password }} 
+        onCompleted={data => {
+          console.log({ data })
+          setOpen(true)
+        }}
+      >
+        {(createUser, { loading, error }) => {
+          return(
+            <form onSubmit={event => handleSubmit(event, createUser)} className = {classes.form}>
+              <FormControl margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "username">
+                  Username
+                </InputLabel>
+                <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
+              </FormControl>
+              <FormControl margin = "normal" fullWidth>
+                <InputLabel htmlFor = "nickname">
+                  Nickname
+                </InputLabel>
+                <Input id = "nickname" onChange = {event => setNickname(event.target.value)}/>
+              </FormControl>
+              <FormControl margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "password">
+                  Password
+                </InputLabel>
+                <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)}/>
+              </FormControl>
+              <Button
+                type = "submit"
+                fullWidth
+                variant = "contained"
+                color = "secondary"
+                onClick = {() => {
+                  nickname === "" && setNickname(GetRandomName)
+                }}
+                disabled={loading || !username.trim() || !password.trim()}
+                className = {classes.submit}>
+                  {loading ? "Registering..." : "Register"}
+              </Button>
+              <Button
+                onClick={() => setNewUser(false)}
+                color = "primary"
+                variant = "outlined"
+                fullWidth
+              >
+                Previous user? Log in here
+              </Button>
+              {/* Error Handling */}
+              {error && <Error error={error}/>}
+            </form>
+          )
+        }}
+      </Mutation> 
+    </Paper>
 
       {/* Success Dialog */}
       < Dialog
@@ -178,3 +186,239 @@ const styles = theme => ({
 });
 
 export default withStyles(styles)(Register);
+
+
+const firstNickname = [
+  "admirer",
+  "arm",
+  "axe",
+  "back",
+  "bane",
+  "baker",
+  "basher",
+  "beard",
+  "bearer",
+  "bender",
+  "blade",
+  "bleeder",
+  "blender",
+  "blood",
+  "boiler",
+  "bone",
+  "boot",
+  "borer",
+  "born",
+  "bow",
+  "breaker",
+  "breeder",
+  "bringer",
+  "brow",
+  "builder",
+  "chaser",
+  "chiller",
+  "collar",
+  "counter",
+  "curser",
+  "dancer",
+  "deck",
+  "dottir",
+  "doubter",
+  "dreamer",
+  "drinker",
+  "drowner",
+  "ear",
+  "eater",
+  "face",
+  "fearer",
+  "friend",
+  "foot",
+  "fury",
+  "gorer",
+  "grim",
+  "grinder",
+  "grower",
+  "growth",
+  "hacker",
+  "hall",
+  "hammer",
+  "hand",
+  "hands",
+  "head",
+  "hilt",
+  "hugger",
+  "hunter",
+  "killer",
+  "leg",
+  "licker",
+  "liker",
+  "lost",
+  "lover",
+  "maker",
+  "mender",
+  "minder",
+  "miner",
+  "mocker",
+  "monger",
+  "neck",
+  "puncher",
+  "rage",
+  "rhyme",
+  "rider",
+  "ringer",
+  "roarer",
+  "roller",
+  "sailor",
+  "screamer",
+  "sequel",
+  "server",
+  "shield",
+  "shoe",
+  "singer",
+  "skinner",
+  "slinger",
+  "slugger",
+  "sniffer",
+  "son",
+  "smasher",
+  "speaker",
+  "stinker",
+  "sucker",
+  "sword",
+  "tail",
+  "tamer",
+  "taster",
+  "thigh",
+  "tongue",
+  "tosser",
+  "tracker",
+  "washer",
+  "wielder",
+  "wing",
+  "wisher",
+  "wrath"
+]
+
+const lastNickName = [
+  "Aesir",
+  "Axe",
+  "Battle",
+  "Bear",
+  "Berg",
+  "Biscuit",
+  "Black",
+  "Blade",
+  "Blood",
+  "Blue",
+  "Boar",
+  "Board",
+  "Bone",
+  "Cage",
+  "Cave",
+  "Chain",
+  "Cloud",
+  "Coffee",
+  "Code",
+  "Death",
+  "Dragon",
+  "Dwarf",
+  "Eel",
+  "Egg",
+  "Elk",
+  "Fire",
+  "Fjord",
+  "Flame",
+  "Flour",
+  "Forge",
+  "Fork",
+  "Fox",
+  "Frost",
+  "Furnace",
+  "Cheese",
+  "Giant",
+  "Glacier",
+  "Goat",
+  "God",
+  "Gold",
+  "Granite",
+  "Griffon",
+  "Grim",
+  "Haggis",
+  "Hall",
+  "Hamarr",
+  "Helm",
+  "Horn",
+  "Horse",
+  "House",
+  "Huskarl",
+  "Ice",
+  "Iceberg",
+  "Icicle",
+  "Iron",
+  "Jarl",
+  "Kelp",
+  "Kettle",
+  "Kraken",
+  "Lake",
+  "Light",
+  "Long",
+  "Mace",
+  "Mead",
+  "Maelstrom",
+  "Mail",
+  "Mammoth",
+  "Man",
+  "Many",
+  "Mountain",
+  "Mutton",
+  "Noun",
+  "Oath",
+  "One",
+  "Owl",
+  "Pain",
+  "Peak",
+  "Pine",
+  "Pot",
+  "Rabbit",
+  "Rat",
+  "Raven",
+  "Red",
+  "Refreshingbeverage",
+  "Ring",
+  "Rime",
+  "Rock",
+  "Root",
+  "Rune",
+  "Salmon",
+  "Sap",
+  "Sea",
+  "Seven",
+  "Shield",
+  "Ship",
+  "Silver",
+  "Sky",
+  "Slush",
+  "Smoke",
+  "Snow",
+  "Spear",
+  "Squid",
+  "Steam",
+  "Stone",
+  "Storm",
+  "Swine",
+  "Sword",
+  "Three",
+  "Tongue",
+  "Torch",
+  "Troll",
+  "Two",
+  "Ulfsark",
+  "Umlaut",
+  "Unsightly",
+  "Valkyrie",
+  "Wave",
+  "White",
+  "Wolf",
+  "Woman",
+  "Worm",
+  "Wyvern"
+]
