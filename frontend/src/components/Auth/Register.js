@@ -18,9 +18,16 @@ import Slide from "@material-ui/core/Slide";
 import Gavel from "@material-ui/icons/Gavel";
 import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 import { create } from "jss";
+import Error from "../Shared/Error"
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
+}
+
+function GetRandomName() {
+  const first = firstNickname[Math.floor(Math.random() * firstNickname.length)]
+  const last = lastNickName[Math.floor(Math.random() * lastNickName.length)]
+  return first+last
 }
 
 const Register = ({ classes, setNewUser }) => {
@@ -60,7 +67,7 @@ const Register = ({ classes, setNewUser }) => {
                 </InputLabel>
                 <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
               </FormControl>
-              <FormControl margin = "normal" required fullWidth>
+              <FormControl margin = "normal" fullWidth>
                 <InputLabel htmlFor = "nickname">
                   Nickname
                 </InputLabel>
@@ -77,7 +84,10 @@ const Register = ({ classes, setNewUser }) => {
                 fullWidth
                 variant = "contained"
                 color = "secondary"
-                disabled={loading || !username.trim() || !nickname.trim() || !password.trim()}
+                onClick = {() => {
+                  nickname === "" && setNickname(GetRandomName)
+                }}
+                disabled={loading || !username.trim() || !password.trim()}
                 className = {classes.submit}>
                   {loading ? "Registering..." : "Register"}
               </Button>
@@ -90,35 +100,35 @@ const Register = ({ classes, setNewUser }) => {
                 Previous user? Log in here
               </Button>
               {/* Error Handling */}
-              {error && <div>Error</div>}
+              {error && <Error error={error}/>}
             </form>
           )
         }}
       </Mutation> 
     </Paper>
 
-    {/* Success Dialog */}
-    < Dialog
-      open={open}
-      disableBackdropClick={true}
-      TransitionComponent={Transition}
-    >
-      <DialogTitle>
-        <VerifiedUserTwoTone className={classes.icon} />
-        New Account
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          User {username} successfully created!
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button color="primary" variant="contained" onClick={() => setNewUser(false)}>
-          Login
-        </Button>
-      </DialogActions>
-    </Dialog>
-  </div>
+      {/* Success Dialog */}
+      < Dialog
+        open={open}
+        disableBackdropClick={true}
+        TransitionComponent={Transition}
+      >
+        <DialogTitle>
+          <VerifiedUserTwoTone className={classes.icon} />
+          New Account
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            User {username} successfully created!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" variant="contained" onClick={() => setNewUser(false)}>
+            Login
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
     );
 };
 
@@ -128,7 +138,6 @@ mutation ($username: String!, $nickname: String!, $password:String!){
     user{
       username
       nickname
-      
 		}
   }
 }
@@ -177,3 +186,239 @@ const styles = theme => ({
 });
 
 export default withStyles(styles)(Register);
+
+
+const firstNickname = [
+  "admirer",
+  "arm",
+  "axe",
+  "back",
+  "bane",
+  "baker",
+  "basher",
+  "beard",
+  "bearer",
+  "bender",
+  "blade",
+  "bleeder",
+  "blender",
+  "blood",
+  "boiler",
+  "bone",
+  "boot",
+  "borer",
+  "born",
+  "bow",
+  "breaker",
+  "breeder",
+  "bringer",
+  "brow",
+  "builder",
+  "chaser",
+  "chiller",
+  "collar",
+  "counter",
+  "curser",
+  "dancer",
+  "deck",
+  "dottir",
+  "doubter",
+  "dreamer",
+  "drinker",
+  "drowner",
+  "ear",
+  "eater",
+  "face",
+  "fearer",
+  "friend",
+  "foot",
+  "fury",
+  "gorer",
+  "grim",
+  "grinder",
+  "grower",
+  "growth",
+  "hacker",
+  "hall",
+  "hammer",
+  "hand",
+  "hands",
+  "head",
+  "hilt",
+  "hugger",
+  "hunter",
+  "killer",
+  "leg",
+  "licker",
+  "liker",
+  "lost",
+  "lover",
+  "maker",
+  "mender",
+  "minder",
+  "miner",
+  "mocker",
+  "monger",
+  "neck",
+  "puncher",
+  "rage",
+  "rhyme",
+  "rider",
+  "ringer",
+  "roarer",
+  "roller",
+  "sailor",
+  "screamer",
+  "sequel",
+  "server",
+  "shield",
+  "shoe",
+  "singer",
+  "skinner",
+  "slinger",
+  "slugger",
+  "sniffer",
+  "son",
+  "smasher",
+  "speaker",
+  "stinker",
+  "sucker",
+  "sword",
+  "tail",
+  "tamer",
+  "taster",
+  "thigh",
+  "tongue",
+  "tosser",
+  "tracker",
+  "washer",
+  "wielder",
+  "wing",
+  "wisher",
+  "wrath"
+]
+
+const lastNickName = [
+  "Aesir",
+  "Axe",
+  "Battle",
+  "Bear",
+  "Berg",
+  "Biscuit",
+  "Black",
+  "Blade",
+  "Blood",
+  "Blue",
+  "Boar",
+  "Board",
+  "Bone",
+  "Cage",
+  "Cave",
+  "Chain",
+  "Cloud",
+  "Coffee",
+  "Code",
+  "Death",
+  "Dragon",
+  "Dwarf",
+  "Eel",
+  "Egg",
+  "Elk",
+  "Fire",
+  "Fjord",
+  "Flame",
+  "Flour",
+  "Forge",
+  "Fork",
+  "Fox",
+  "Frost",
+  "Furnace",
+  "Cheese",
+  "Giant",
+  "Glacier",
+  "Goat",
+  "God",
+  "Gold",
+  "Granite",
+  "Griffon",
+  "Grim",
+  "Haggis",
+  "Hall",
+  "Hamarr",
+  "Helm",
+  "Horn",
+  "Horse",
+  "House",
+  "Huskarl",
+  "Ice",
+  "Iceberg",
+  "Icicle",
+  "Iron",
+  "Jarl",
+  "Kelp",
+  "Kettle",
+  "Kraken",
+  "Lake",
+  "Light",
+  "Long",
+  "Mace",
+  "Mead",
+  "Maelstrom",
+  "Mail",
+  "Mammoth",
+  "Man",
+  "Many",
+  "Mountain",
+  "Mutton",
+  "Noun",
+  "Oath",
+  "One",
+  "Owl",
+  "Pain",
+  "Peak",
+  "Pine",
+  "Pot",
+  "Rabbit",
+  "Rat",
+  "Raven",
+  "Red",
+  "Refreshingbeverage",
+  "Ring",
+  "Rime",
+  "Rock",
+  "Root",
+  "Rune",
+  "Salmon",
+  "Sap",
+  "Sea",
+  "Seven",
+  "Shield",
+  "Ship",
+  "Silver",
+  "Sky",
+  "Slush",
+  "Smoke",
+  "Snow",
+  "Spear",
+  "Squid",
+  "Steam",
+  "Stone",
+  "Storm",
+  "Swine",
+  "Sword",
+  "Three",
+  "Tongue",
+  "Torch",
+  "Troll",
+  "Two",
+  "Ulfsark",
+  "Umlaut",
+  "Unsightly",
+  "Valkyrie",
+  "Wave",
+  "White",
+  "Wolf",
+  "Woman",
+  "Worm",
+  "Wyvern"
+]
