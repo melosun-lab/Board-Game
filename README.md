@@ -6,4 +6,4 @@ How to start Graphql
 
 How to start the web
 1. Click into frontend file.
-2. yarn start
+2. run "yarn start"
