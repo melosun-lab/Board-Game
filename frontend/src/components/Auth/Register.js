@@ -51,7 +51,7 @@ const Register = ({ classes, setNewUser }) => {
       if (event.target.value !== password && passwordErr === ""){
         setPasswordErr("password not the same")
       }
-      if (event.target.value === password){
+      if (event.target.value === password || event.target.value === ""){
         setPasswordErr("")
       }
     }
@@ -108,13 +108,13 @@ const Register = ({ classes, setNewUser }) => {
                 <InputLabel htmlFor = "password">
                   Password
                 </InputLabel>
-                <Input id = "password" type = "password" onChange = {event => handleValidatePassword(event)}/>
+                <Input id = "password" type = "password" onBlur = {event => handleValidatePassword(event)}/>
               </FormControl>
               <FormControl margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "validatePassword">
                   Confirm Password
                 </InputLabel>
-                <Input id = "validatePassword" type = "password" onChange = {event => handleValidatePassword(event)}/>
+                <Input id = "validatePassword" type = "password" onBlur = {event => handleValidatePassword(event)}/>
                 <span style={{color: "red"}}>{passwordErr}</span>
               </FormControl>
               <Button
