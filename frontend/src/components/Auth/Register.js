@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Mutation } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
@@ -38,13 +39,20 @@ const Register = ({ classes, setNewUser }) => {
   const [validatePassword, setValidatePassword] = useState("")
   const [open, setOpen] = useState(false)
   const [passwordErr, setPasswordErr] = useState("")
+  const [usernameExist, setUsernameExist] = useState(false)
+  const [checkUsername, setCheckUsername] = useState(false)
 
   const handleSubmit = (event, createUser) => {
     event.preventDefault()
     createUser()
   }
 
-  const handleValidatePassword = (event) =>{
+  const handleValidateUsername = (event) => {
+    setCheckUsername(true)
+    setUsername(event.target.value)
+  }
+
+  const handleValidatePassword = (event) => {
 
     if(event.target.id === "validatePassword"){
       setValidatePassword(event.target.value)
@@ -90,7 +98,17 @@ const Register = ({ classes, setNewUser }) => {
                 <InputLabel htmlFor = "username">
                   Username
                 </InputLabel>
-                <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
+                <Input id = "username" onBlur = {event => handleValidateUsername(event)}/>
+                {checkUsername && <Query query={USERNAME_QUERY} variables={{ username: username }}>
+                  {({ data, loading, error }) => {
+                      if (loading) return <div>Loading</div>
+                      if (error) return <div>Error</div>
+                      setCheckUsername(false)
+                      setUsernameExist(data.exist)
+                      return (null)
+                    }}
+                  </Query>} 
+                <span style={{color: "red"}}>{usernameExist ? "Username already exist": ""}</span>
               </FormControl>
               <FormControl margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "email">
@@ -125,7 +143,7 @@ const Register = ({ classes, setNewUser }) => {
                 onClick = {() => {
                   nickname === "" && setNickname(GetRandomName)
                 }}
-                disabled={loading || !username.trim() || !password.trim() || (password !== validatePassword)}
+                disabled={loading || !username.trim() || !password.trim() || (password !== validatePassword) || usernameExist}
                 className = {classes.submit}>
                   {loading ? "Registering..." : "Register"}
               </Button>
@@ -178,6 +196,12 @@ mutation ($username: String!, $nickname: String!, $password:String!, $email:Stri
       nickname
 		}
   }
+}
+`
+
+const USERNAME_QUERY = gql`
+query ($username: String!){
+  exist(username: $username)
 }
 `
 
