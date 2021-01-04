@@ -35,11 +35,35 @@ const Register = ({ classes, setNewUser }) => {
   const [nickname, setNickname] = useState("")
   const [password, setPassword] = useState("")
   const [email, setEmail] = useState("")
+  const [validatePassword, setValidatePassword] = useState("")
   const [open, setOpen] = useState(false)
+  const [passwordErr, setPasswordErr] = useState("")
 
   const handleSubmit = (event, createUser) => {
     event.preventDefault()
     createUser()
+  }
+
+  const handleValidatePassword = (event) =>{
+
+    if(event.target.id === "validatePassword"){
+      setValidatePassword(event.target.value)
+      if (event.target.value !== password && passwordErr === ""){
+        setPasswordErr("password not the same")
+      }
+      if (event.target.value === password){
+        setPasswordErr("")
+      }
+    }
+    else{ // password
+      setPassword(event.target.value)
+      if (validatePassword !== "" && event.target.value !== validatePassword && passwordErr === ""){
+        setPasswordErr("password not the same")
+      }
+      if (event.target.value === validatePassword){
+        setPasswordErr("")
+      }
+    }
   }
   
   return (
@@ -84,7 +108,14 @@ const Register = ({ classes, setNewUser }) => {
                 <InputLabel htmlFor = "password">
                   Password
                 </InputLabel>
-                <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)}/>
+                <Input id = "password" type = "password" onChange = {event => handleValidatePassword(event)}/>
+              </FormControl>
+              <FormControl margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "validatePassword">
+                  Confirm Password
+                </InputLabel>
+                <Input id = "validatePassword" type = "password" onChange = {event => handleValidatePassword(event)}/>
+                <span style={{color: "red"}}>{passwordErr}</span>
               </FormControl>
               <Button
                 type = "submit"
@@ -94,7 +125,7 @@ const Register = ({ classes, setNewUser }) => {
                 onClick = {() => {
                   nickname === "" && setNickname(GetRandomName)
                 }}
-                disabled={loading || !username.trim() || !password.trim()}
+                disabled={loading || !username.trim() || !password.trim() || (password !== validatePassword)}
                 className = {classes.submit}>
                   {loading ? "Registering..." : "Register"}
               </Button>
