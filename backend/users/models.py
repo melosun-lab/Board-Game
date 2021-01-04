@@ -6,6 +6,8 @@ class User(AbstractUser):
     # password = models.CharField(max_length=16)
     nickname = models.CharField(max_length=30)
     friends = models.TextField(blank=True)
+    email = models.CharField(max_length=30)
+
     REQURIED_FIELDS = []
 
 # description = models.TextField(blank=True)

@@ -34,6 +34,7 @@ const Register = ({ classes, setNewUser }) => {
   const [username, setUsername] = useState("")
   const [nickname, setNickname] = useState("")
   const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("")
   const [open, setOpen] = useState(false)
 
   const handleSubmit = (event, createUser) => {
@@ -52,7 +53,7 @@ const Register = ({ classes, setNewUser }) => {
       </Typography>
       <Mutation 
         mutation = {REGISTER_MUTATION} 
-        variables={{ username, nickname, password }} 
+        variables={{ username, nickname, password, email }} 
         onCompleted={data => {
           console.log({ data })
           setOpen(true)
@@ -66,6 +67,12 @@ const Register = ({ classes, setNewUser }) => {
                   Username
                 </InputLabel>
                 <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
+              </FormControl>
+              <FormControl margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "email">
+                  Email
+                </InputLabel>
+                <Input id = "email" onChange = {event => setEmail(event.target.value)}/>
               </FormControl>
               <FormControl margin = "normal" fullWidth>
                 <InputLabel htmlFor = "nickname">
@@ -133,8 +140,8 @@ const Register = ({ classes, setNewUser }) => {
 };
 
 const REGISTER_MUTATION = gql`
-mutation ($username: String!, $nickname: String!, $password:String!){
-  createUser(username:$username, nickname:$nickname, password:$password){
+mutation ($username: String!, $nickname: String!, $password:String!, $email:String!){
+  createUser(username:$username, nickname:$nickname, password:$password, email:$email){
     user{
       username
       nickname
