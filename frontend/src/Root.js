@@ -35,6 +35,7 @@ const ME_QUERY = gql`
             id
             username
             nickname
+            email
         }
     }
 `
