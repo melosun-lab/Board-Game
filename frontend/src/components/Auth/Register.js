@@ -39,7 +39,7 @@ const Register = ({ classes, setNewUser }) => {
   const [email, setEmail] = useState("")
   const [validatePassword, setValidatePassword] = useState("")
   const [open, setOpen] = useState(false)
-  const [passwordErr, setPasswordErr] = useState("")
+  const [passwordErr, setPasswordErr] = useState(false)
   const [usernameExist, setUsernameExist] = useState(false)
   const [checkUsername, setCheckUsername] = useState(false)
 
@@ -57,20 +57,20 @@ const Register = ({ classes, setNewUser }) => {
 
     if(event.target.id === "validatePassword"){
       setValidatePassword(event.target.value)
-      if (event.target.value !== password && passwordErr === ""){
-        setPasswordErr("password not the same")
+      if (event.target.value !== password && !passwordErr){
+        setPasswordErr(true)
       }
       if (event.target.value === password || event.target.value === ""){
-        setPasswordErr("")
+        setPasswordErr(false)
       }
     }
     else{ // password
       setPassword(event.target.value)
-      if (validatePassword !== "" && event.target.value !== validatePassword && passwordErr === ""){
-        setPasswordErr("password not the same")
+      if (validatePassword !== "" && event.target.value !== validatePassword && !passwordErr){
+        setPasswordErr(true)
       }
       if (event.target.value === validatePassword){
-        setPasswordErr("")
+        setPasswordErr(false)
       }
     }
   }
@@ -129,12 +129,12 @@ const Register = ({ classes, setNewUser }) => {
                 </InputLabel>
                 <Input id = "password" type = "password" onBlur = {event => handleValidatePassword(event)}/>
               </FormControl>
-              <FormControl margin = "normal" required fullWidth>
+              <FormControl error={passwordErr} margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "validatePassword">
                   Confirm Password
                 </InputLabel>
                 <Input id = "validatePassword" type = "password" onBlur = {event => handleValidatePassword(event)}/>
-                <span style={{color: "red"}}>{passwordErr}</span>
+                {passwordErr && <FormHelperText error>{"Password not the same"}</FormHelperText>}
               </FormControl>
               <Button
                 type = "submit"
