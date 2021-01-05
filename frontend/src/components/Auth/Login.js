@@ -31,13 +31,10 @@ const Login = ({ classes, setNewUser }) => {
   const handleSubmit = async (event, error, tokenAuth, client) => {   
     event.preventDefault()
     const res = await tokenAuth()
+
     if (res){
-      setLoginErrMsg("")
       localStorage.setItem('authToken', res.data.tokenAuth.token)
       client.writeData({ data: { isLoggedIn: true} })
-    }
-    else{
-      setLoginErrMsg("The username and/or password you specified are not correct.")
     }
   }
 
@@ -53,6 +50,9 @@ const Login = ({ classes, setNewUser }) => {
         <Mutation 
           mutation={LOGIN_MUTATION} 
           variables={{ username, password }}
+          onError = {data =>{
+            setLoginErrMsg("The username and/or password you specified are not correct.")
+          }}
         >
           {(tokenAuth, { loading, error, called, client }) => {
             return(
