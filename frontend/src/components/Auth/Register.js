@@ -8,6 +8,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -17,6 +19,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import Gavel from "@material-ui/icons/Gavel";
 import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+
 import { create } from "jss";
 import Error from "../Shared/Error"
 
@@ -37,11 +42,22 @@ const Register = ({ classes, setNewUser }) => {
   const [confirm, setConfirm] = useState("")
   const [email, setEmail] = useState("")
   const [open, setOpen] = useState(false)
+  const [showPassword, setShowPassWord] =  useState(false)
+  const [showConfirm, setShowConfirm] =  useState(false)
 
   const handleSubmit = (event, createUser) => {
     event.preventDefault()
     createUser()
   }
+  const handleClickShowPassword = () =>{
+    setShowPassWord(!showPassword)
+  }
+  const handleClickShowConfirm = () =>{
+    setShowConfirm(!showConfirm)
+  }
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   
   return (
   <div className = {classes.root}>
@@ -86,13 +102,35 @@ const Register = ({ classes, setNewUser }) => {
                 <InputLabel htmlFor = "password">
                   Password
                 </InputLabel>
-                <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)}/>
+                <Input id = "password" type ={showPassword ? "text" : "password"} onChange = {event => setPassword(event.target.value)} endAdornment = 
+                {
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }/>
               </FormControl>
               <FormControl margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "confirm">
                   Confirm
                 </InputLabel>
-                <Input id = "confirm" type = "password" onChange = {event => setConfirm(event.target.value)}/>
+                <Input id = "confirm" type ={showConfirm ? "text" : "password"} onChange = {event => setConfirm(event.target.value)} endAdornment = 
+                {
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowConfirm}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showConfirm ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }/>
               </FormControl>
               <Button
                 type = "submit"
