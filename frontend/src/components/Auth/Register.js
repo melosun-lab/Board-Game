@@ -6,6 +6,7 @@ import { gql } from 'apollo-boost';
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import FormControl from "@material-ui/core/FormControl";
+import { FormHelperText } from '@material-ui/core';
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -94,7 +95,7 @@ const Register = ({ classes, setNewUser }) => {
         {(createUser, { loading, error }) => {
           return(
             <form onSubmit={event => handleSubmit(event, createUser)} className = {classes.form}>
-              <FormControl margin = "normal" required fullWidth>
+              <FormControl error={usernameExist} margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "username">
                   Username
                 </InputLabel>
@@ -108,7 +109,7 @@ const Register = ({ classes, setNewUser }) => {
                       return (null)
                     }}
                   </Query>} 
-                <span style={{color: "red"}}>{usernameExist ? "Username already exist": ""}</span>
+                {usernameExist && <FormHelperText error>{"Username already exist"}</FormHelperText>}
               </FormControl>
               <FormControl margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "email">
