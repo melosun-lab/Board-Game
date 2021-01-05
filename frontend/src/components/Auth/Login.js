@@ -8,18 +8,37 @@ import FormControl from "@material-ui/core/FormControl";
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
+import Slide from "@material-ui/core/Slide";
+import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 import Lock from "@material-ui/icons/Lock";
 import Error from "../Shared/Error"
+
+function Transition(props) {
+  return <Slide direction="up" {...props} />
+}
+
 const Login = ({ classes, setNewUser }) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [loginErrMsg, setLoginErrMsg] = useState("")
 
-  const handleSubmit = async (event, tokenAuth, client) => {
+  const handleSubmit = async (event, error, tokenAuth, client) => {   
     event.preventDefault()
     const res = await tokenAuth()
-    localStorage.setItem('authToken', res.data.tokenAuth.token)
-    client.writeData({ data: { isLoggedIn: true} })
+    if (res){
+      setLoginErrMsg("")
+      localStorage.setItem('authToken', res.data.tokenAuth.token)
+      client.writeData({ data: { isLoggedIn: true} })
+    }
+    else{
+      setLoginErrMsg("The username and/or password you specified are not correct.")
+    }
   }
 
   return (
@@ -37,7 +56,7 @@ const Login = ({ classes, setNewUser }) => {
         >
           {(tokenAuth, { loading, error, called, client }) => {
             return(
-              <form onSubmit={event => handleSubmit(event, tokenAuth, client)} className = {classes.form}>
+              <form onSubmit={event => handleSubmit(event, error, tokenAuth, client)} className = {classes.form}>
                 <FormControl margin = "normal" required fullWidth>
                   <InputLabel htmlFor = "username">
                     Username
@@ -50,6 +69,7 @@ const Login = ({ classes, setNewUser }) => {
                   </InputLabel>
                   <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)}/>
                 </FormControl>
+                <span style={{color: "red"}}>{loginErrMsg}</span>
                 <Button
                   type = "submit"
                   fullWidth
@@ -58,6 +78,7 @@ const Login = ({ classes, setNewUser }) => {
                   disabled={loading || !username.trim() || !password.trim()}
                   className = {classes.submit}
                 >
+                    
                     {loading ? "Logging in" : "Login"}
                 </Button>
                 <Button
@@ -69,7 +90,6 @@ const Login = ({ classes, setNewUser }) => {
                   New User? Register Here
                 </Button>
                 {/* Error Handling */}
-                {error && <Error error={error} />}
               </form>
             )
           }}
