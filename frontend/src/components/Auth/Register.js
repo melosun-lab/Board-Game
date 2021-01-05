@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Mutation } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import FormControl from "@material-ui/core/FormControl";
+import { FormHelperText } from '@material-ui/core';
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -35,11 +37,42 @@ const Register = ({ classes, setNewUser }) => {
   const [nickname, setNickname] = useState("")
   const [password, setPassword] = useState("")
   const [email, setEmail] = useState("")
+  const [validatePassword, setValidatePassword] = useState("")
   const [open, setOpen] = useState(false)
+  const [passwordErr, setPasswordErr] = useState(false)
+  const [usernameExist, setUsernameExist] = useState(false)
+  const [checkUsername, setCheckUsername] = useState(false)
 
   const handleSubmit = (event, createUser) => {
     event.preventDefault()
     createUser()
+  }
+
+  const handleValidateUsername = (event) => {
+    setCheckUsername(true)
+    setUsername(event.target.value)
+  }
+
+  const handleValidatePassword = (event) => {
+
+    if(event.target.id === "validatePassword"){
+      setValidatePassword(event.target.value)
+      if (event.target.value !== password && !passwordErr){
+        setPasswordErr(true)
+      }
+      if (event.target.value === password || event.target.value === ""){
+        setPasswordErr(false)
+      }
+    }
+    else{ // password
+      setPassword(event.target.value)
+      if (validatePassword !== "" && event.target.value !== validatePassword && !passwordErr){
+        setPasswordErr(true)
+      }
+      if (event.target.value === validatePassword){
+        setPasswordErr(false)
+      }
+    }
   }
   
   return (
@@ -62,11 +95,21 @@ const Register = ({ classes, setNewUser }) => {
         {(createUser, { loading, error }) => {
           return(
             <form onSubmit={event => handleSubmit(event, createUser)} className = {classes.form}>
-              <FormControl margin = "normal" required fullWidth>
+              <FormControl error={usernameExist} margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "username">
                   Username
                 </InputLabel>
-                <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
+                <Input id = "username" onBlur = {event => handleValidateUsername(event)}/>
+                {checkUsername && <Query query={USERNAME_QUERY} variables={{ username: username }}>
+                  {({ data, loading, error }) => {
+                      if (loading) return <div>Loading</div>
+                      if (error) return <div>Error</div>
+                      setCheckUsername(false)
+                      setUsernameExist(data.exist)
+                      return (null)
+                    }}
+                  </Query>} 
+                {usernameExist && <FormHelperText error>{"Username already exist"}</FormHelperText>}
               </FormControl>
               <FormControl margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "email">
@@ -84,7 +127,14 @@ const Register = ({ classes, setNewUser }) => {
                 <InputLabel htmlFor = "password">
                   Password
                 </InputLabel>
-                <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)}/>
+                <Input id = "password" type = "password" onBlur = {event => handleValidatePassword(event)}/>
+              </FormControl>
+              <FormControl error={passwordErr} margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "validatePassword">
+                  Confirm Password
+                </InputLabel>
+                <Input id = "validatePassword" type = "password" onBlur = {event => handleValidatePassword(event)}/>
+                {passwordErr && <FormHelperText error>{"Password not the same"}</FormHelperText>}
               </FormControl>
               <Button
                 type = "submit"
@@ -94,7 +144,7 @@ const Register = ({ classes, setNewUser }) => {
                 onClick = {() => {
                   nickname === "" && setNickname(GetRandomName)
                 }}
-                disabled={loading || !username.trim() || !password.trim()}
+                disabled={loading || !username.trim() || !password.trim() || (password !== validatePassword) || usernameExist}
                 className = {classes.submit}>
                   {loading ? "Registering..." : "Register"}
               </Button>
@@ -147,6 +197,12 @@ mutation ($username: String!, $nickname: String!, $password:String!, $email:Stri
       nickname
 		}
   }
+}
+`
+
+const USERNAME_QUERY = gql`
+query ($username: String!){
+  exist(username: $username)
 }
 `
 
