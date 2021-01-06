@@ -8,6 +8,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
+import InputAdornment from "@material-ui/core/InputAdornment"
+import IconButton from "@material-ui/core/IconButton"
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -16,6 +18,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import Slide from "@material-ui/core/Slide";
 import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
+import Visibility  from "@material-ui/icons/Visibility"
+import VisibilityOff from "@material-ui/icons/VisibilityOff"
 import Lock from "@material-ui/icons/Lock";
 import Error from "../Shared/Error"
 
@@ -27,6 +31,7 @@ const Login = ({ classes, setNewUser }) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [loginErrMsg, setLoginErrMsg] = useState("")
+  const [showPassword, setShowPassWord] = useState(false)
 
   const handleSubmit = async (event, error, tokenAuth, client) => {   
     event.preventDefault()
@@ -37,6 +42,14 @@ const Login = ({ classes, setNewUser }) => {
       client.writeData({ data: { isLoggedIn: true} })
     }
   }
+
+  const handleClickShowPassword = () =>{
+    setShowPassWord(!showPassword)
+  }
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   return (
     <div className = {classes.root}>
@@ -67,7 +80,18 @@ const Login = ({ classes, setNewUser }) => {
                   <InputLabel htmlFor = "password">
                     Password
                   </InputLabel>
-                  <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)}/>
+                  <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)} endAdornment = 
+              {
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }/>
                 </FormControl>
                 <span style={{color: "red"}}>{loginErrMsg}</span>
                 <Button
