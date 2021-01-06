@@ -27,20 +27,31 @@ const RoomList = ({ classes, rooms }) => (
                 variant: "subheading",
                 color: "primary"
               }}
-              primary={`Room ID: ${room.id}`}
+              primary={`${room.name}`}
               secondary={
                 <Link className={classes.link} to={`/profile/${room.owner.id}`}>
                   {`Owner: ${room.owner.username}`}
                 </Link>
               }
             />
+            <ListItemText
+              primaryTypographyProps={{
+                variant: "subheading",
+                color: "primary"
+              }}
+              primary={`${room.game}`}
+            />
           </ListItem>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.details}>
           <Typography variant="body1">
+            {`Room ID: ${room.id}`}
+            <br />
             {`Capacity: ${room.capacity}`}
             <br />
             {`Members: ${room.members}`}
+            <br />
+            {`Url: ${room.url}`}
           </Typography>
         </ExpansionPanelDetails>
         <ExpansionPanelActions>

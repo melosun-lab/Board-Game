@@ -20,14 +20,16 @@ class CreateRoom(graphene.Mutation):
         capacity = graphene.String()
         url = graphene.String()
         members = graphene.String()
+        name = graphene.String()
+        game = graphene.String()
 
-    def mutate(self, info, capacity, url, members):
+    def mutate(self, info, capacity, url, members, name, game):
         user = info.context.user
 
         if user.is_anonymous:
             raise Exception('Log in to create a room.')
 
-        room = Room(capacity=capacity, url = url, members = "", owner = user)
+        room = Room(capacity=capacity, url = url, members = user.username, owner = user, name = name, game = game)
         room.save()
         return CreateRoom(room=room)
 
@@ -39,8 +41,10 @@ class UpdateRoom(graphene.Mutation):
         capacity = graphene.String()
         url = graphene.String()
         members = graphene.String()
+        name = graphene.String()
+        game = graphene.String()
 
-    def mutate(self, info, id, capacity=None, url=None, members=None):
+    def mutate(self, info, id, capacity=None, url=None, members=None, name=None, game=None):
         user =  info.context.user
         room = Room.objects.get(id = id)
 
@@ -52,6 +56,10 @@ class UpdateRoom(graphene.Mutation):
             room.url = url
         if members:
             room.members = members
+        if name:
+            room.name = name
+        if game:
+            room.game = game
 
         room.save()
 

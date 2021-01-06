@@ -22,13 +22,15 @@ const App = ({ classes }) => {
   );
 };
 
-const GET_ROOMS_QUERY = gql`
+export const GET_ROOMS_QUERY = gql`
   query getRoomsQuery {
     rooms {
       id
       url
       capacity
       members
+      name
+      game
       owner {
         id
         username
