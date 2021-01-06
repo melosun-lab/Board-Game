@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Mutation } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import FormControl from "@material-ui/core/FormControl";
+import { FormHelperText } from '@material-ui/core';
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -19,9 +19,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import Gavel from "@material-ui/icons/Gavel";
 import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-
 import { create } from "jss";
 import Error from "../Shared/Error"
 
@@ -39,25 +36,44 @@ const Register = ({ classes, setNewUser }) => {
   const [username, setUsername] = useState("")
   const [nickname, setNickname] = useState("")
   const [password, setPassword] = useState("")
-  const [confirm, setConfirm] = useState("")
   const [email, setEmail] = useState("")
+  const [validatePassword, setValidatePassword] = useState("")
   const [open, setOpen] = useState(false)
-  const [showPassword, setShowPassWord] =  useState(false)
-  const [showConfirm, setShowConfirm] =  useState(false)
+  const [passwordErr, setPasswordErr] = useState(false)
+  const [usernameExist, setUsernameExist] = useState(false)
+  const [checkUsername, setCheckUsername] = useState(false)
 
   const handleSubmit = (event, createUser) => {
     event.preventDefault()
     createUser()
   }
-  const handleClickShowPassword = () =>{
-    setShowPassWord(!showPassword)
+
+  const handleValidateUsername = (event) => {
+    setCheckUsername(true)
+    setUsername(event.target.value)
   }
-  const handleClickShowConfirm = () =>{
-    setShowConfirm(!showConfirm)
+
+  const handleValidatePassword = (event) => {
+
+    if(event.target.id === "validatePassword"){
+      setValidatePassword(event.target.value)
+      if (event.target.value !== password && !passwordErr){
+        setPasswordErr(true)
+      }
+      if (event.target.value === password || event.target.value === ""){
+        setPasswordErr(false)
+      }
+    }
+    else{ // password
+      setPassword(event.target.value)
+      if (validatePassword !== "" && event.target.value !== validatePassword && !passwordErr){
+        setPasswordErr(true)
+      }
+      if (event.target.value === validatePassword){
+        setPasswordErr(false)
+      }
+    }
   }
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
   
   return (
   <div className = {classes.root}>
@@ -70,21 +86,30 @@ const Register = ({ classes, setNewUser }) => {
       </Typography>
       <Mutation 
         mutation = {REGISTER_MUTATION} 
-        variables={{ username, nickname, password, email}} 
+        variables={{ username, nickname, password, email }} 
         onCompleted={data => {
-          
-          if (confirm === password)
-            setOpen(true)
+          console.log({ data })
+          setOpen(true)
         }}
       >
         {(createUser, { loading, error }) => {
           return(
             <form onSubmit={event => handleSubmit(event, createUser)} className = {classes.form}>
-              <FormControl margin = "normal" required fullWidth>
+              <FormControl error={usernameExist} margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "username">
                   Username
                 </InputLabel>
-                <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
+                <Input id = "username" onBlur = {event => handleValidateUsername(event)}/>
+                {checkUsername && <Query query={USERNAME_QUERY} variables={{ username: username }}>
+                  {({ data, loading, error }) => {
+                      if (loading) return <div>Loading</div>
+                      if (error) return <div>Error</div>
+                      setCheckUsername(false)
+                      setUsernameExist(data.exist)
+                      return (null)
+                    }}
+                  </Query>} 
+                {usernameExist && <FormHelperText error>{"Username already exist"}</FormHelperText>}
               </FormControl>
               <FormControl margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "email">
@@ -102,35 +127,14 @@ const Register = ({ classes, setNewUser }) => {
                 <InputLabel htmlFor = "password">
                   Password
                 </InputLabel>
-                <Input id = "password" type ={showPassword ? "text" : "password"} onChange = {event => setPassword(event.target.value)} endAdornment = 
-                {
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                }/>
+                <Input id = "password" type = "password" onBlur = {event => handleValidatePassword(event)}/>
               </FormControl>
-              <FormControl margin = "normal" required fullWidth>
-                <InputLabel htmlFor = "confirm">
-                  Confirm
+              <FormControl error={passwordErr} margin = "normal" required fullWidth>
+                <InputLabel htmlFor = "validatePassword">
+                  Confirm Password
                 </InputLabel>
-                <Input id = "confirm" type ={showConfirm ? "text" : "password"} onChange = {event => setConfirm(event.target.value)} endAdornment = 
-                {
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowConfirm}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showConfirm ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                  </InputAdornment>
-                }/>
+                <Input id = "validatePassword" type = "password" onBlur = {event => handleValidatePassword(event)}/>
+                {passwordErr && <FormHelperText error>{"Password not the same"}</FormHelperText>}
               </FormControl>
               <Button
                 type = "submit"
@@ -140,7 +144,7 @@ const Register = ({ classes, setNewUser }) => {
                 onClick = {() => {
                   nickname === "" && setNickname(GetRandomName)
                 }}
-                disabled={loading || !username.trim() || !password.trim()}
+                disabled={loading || !username.trim() || !password.trim() || (password !== validatePassword) || usernameExist}
                 className = {classes.submit}>
                   {loading ? "Registering..." : "Register"}
               </Button>
@@ -193,6 +197,12 @@ mutation ($username: String!, $nickname: String!, $password:String!, $email:Stri
       nickname
 		}
   }
+}
+`
+
+const USERNAME_QUERY = gql`
+query ($username: String!){
+  exist(username: $username)
 }
 `
 
