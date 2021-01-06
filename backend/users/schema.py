@@ -9,9 +9,17 @@ class UserType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     user = graphene.Field(UserType, id=graphene.Int(required=True))
+    exist = graphene.Boolean(username=graphene.String(required=True))
     users = graphene.List(UserType)
     me = graphene.Field(UserType)
     
+    def resolve_exist(self, info, username): 
+        try:
+            get_user_model().objects.get(username=username)
+            return True
+        except get_user_model().DoesNotExist:
+            return False
+
     def resolve_user(self,info, id):
         return get_user_model().objects.get(id=id)
 
@@ -31,9 +39,10 @@ class CreateUser(graphene.Mutation):
         username = graphene.String(required=True)
         password = graphene.String(required=True)
         nickname = graphene.String(required=True)
-    
-    def mutate(self, info, username, password, nickname):
-        user = get_user_model()(username=username, password=password, nickname=nickname)
+        email = graphene.String(required=True)
+   
+    def mutate(self, info, username, password, nickname, email):
+        user = get_user_model()(username=username, password=password, nickname=nickname, email=email)
         user.set_password(password)
         user.save()
         return CreateUser(user=user)
@@ -47,8 +56,11 @@ class UpdateUser(graphene.Mutation):
         password = graphene.String()
         nickname = graphene.String()
         friends = graphene.String()
+        email = graphene.String()
+
+        
     
-    def mutate(self, info, id, username=None, password=None, nickname=None, friends=None):
+    def mutate(self, info, id, username=None, password=None, nickname=None, friends=None, email=None):
         user = get_user_model().objects.get(id=id)
 
         if user != info.context.user:
@@ -62,6 +74,8 @@ class UpdateUser(graphene.Mutation):
             user.nickname = nickname
         if friends:
             user.friends = friends
+        if email:
+            user.email = email
 
         user.save()
 
