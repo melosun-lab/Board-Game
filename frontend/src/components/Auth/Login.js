@@ -80,7 +80,7 @@ const Login = ({ classes, setNewUser }) => {
                   <InputLabel htmlFor = "password">
                     Password
                   </InputLabel>
-                  <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)} endAdornment = 
+                  <Input id = "password" type = {showPassword ? "text" : "password"} onChange = {event => setPassword(event.target.value)} endAdornment = 
               {
                 <InputAdornment position="end">
                   <IconButton
