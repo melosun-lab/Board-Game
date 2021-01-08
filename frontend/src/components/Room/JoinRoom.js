@@ -3,8 +3,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // import IconButton from "@material-ui/core/IconButton";
 // import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 
-const LikeTrack = ({ classes }) => {
-  return <div>LikeTrack</div>;
+const JoinRoom = ({ classes }) => {
+  return <div>Join</div>;
 };
 
 const styles = theme => ({
@@ -16,4 +16,4 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(LikeTrack);
+export default withStyles(styles)(JoinRoom);
