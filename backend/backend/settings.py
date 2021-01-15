@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
+from setEnv import EMAIL_HOST,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +45,11 @@ INSTALLED_APPS = [
     'users'
 ]
 
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+}
+
+
 GRAPHENE = {
     'SCHEMA': 'backend.schema.schema',
     'MIDDLEWARE': [
@@ -62,6 +69,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+FRONTEND_URL = 'http://localhost:3000'
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000'
@@ -79,7 +88,7 @@ AUTH_USER_MODEL = 'users.user'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'users/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,3 +152,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  
+EMAIL_PORT = 465  
+EMAIL_USE_SSL = True 
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

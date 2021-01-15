@@ -1,0 +1,6 @@
+Hi {{username}},
+
+Please click on the link to confirm your registration,
+{{ link }}
+
+If you think it's not you, then please just ignore this email.

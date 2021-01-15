@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Mutation } from 'react-apollo';
 import { Query } from 'react-apollo';
@@ -40,18 +40,50 @@ const Register = ({ classes, setNewUser }) => {
   const [validatePassword, setValidatePassword] = useState("")
   const [open, setOpen] = useState(false)
   const [passwordErr, setPasswordErr] = useState(false)
+
   const [usernameExist, setUsernameExist] = useState(false)
   const [checkUsername, setCheckUsername] = useState(false)
+
+  const [confirmEmail, setConfirmEmail] = useState(false)
+  const [checkEmail, setCheckEmail] = useState(false)
+  const [emailExist, setEmailExist] = useState(false)
+  const [emailErrText, setEmailErrText] = useState("")
+  const [emailErr, setEmailErr] = useState(false)
 
   const handleSubmit = (event, createUser) => {
     event.preventDefault()
     createUser()
   }
 
+  const handleConfirmEmail = (event, confirmUser) => {
+    event.preventDefault()
+    confirmUser()
+  }
+
   const handleValidateUsername = (event) => {
     setCheckUsername(true)
     setUsername(event.target.value)
   }
+
+  const handleValidateEmail = (event) => {
+    setConfirmEmail(false)
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    if (!event.target.value || re.test(event.target.value)){
+      setEmail(event.target.value)
+      setEmailErr(false)
+      setEmailErrText("")
+    }
+    else{
+      setEmailErr(true)
+      setEmailErrText("This is not a valid email address")
+    }
+  }
+
+  useEffect(()=>{
+    if (email) {
+      setCheckEmail(true)
+    }
+  }, [email])
 
   const handleValidatePassword = (event) => {
 
@@ -103,19 +135,51 @@ const Register = ({ classes, setNewUser }) => {
                 {checkUsername && <Query query={USERNAME_QUERY} variables={{ username: username }}>
                   {({ data, loading, error }) => {
                       if (loading) return <div>Loading</div>
-                      if (error) return <div>Error</div>
+                      if (error) return <div>Error occurs when checking whether username exists</div>
                       setCheckUsername(false)
-                      setUsernameExist(data.exist)
+                      setUsernameExist(data.existUsername)
                       return (null)
                     }}
                   </Query>} 
                 {usernameExist && <FormHelperText error>{"Username already exist"}</FormHelperText>}
               </FormControl>
-              <FormControl margin = "normal" required fullWidth>
+              <FormControl error={emailErr} margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "email">
                   Email
                 </InputLabel>
-                <Input id = "email" onChange = {event => setEmail(event.target.value)}/>
+                <Input id = "email" onBlur = {event => handleValidateEmail(event)}/>
+                {checkEmail && <Query query={EMAIL_EXIST_QUERY} variables={{ email: email }}>
+                  {({ data, loading, error }) => {
+                      if (loading) return <div>Loading</div>
+                      if (error) return <div>Error occurs when checking whether email exists</div>
+                      setCheckEmail(false)
+                      setEmailErr(false)
+                      setEmailErrText("")
+                      setConfirmEmail(false)
+                      setEmailExist(data.existEmail)
+                      return (null)
+                    }}
+                  </Query>}
+                {emailExist && <Query query={CONFIRM_QUERY} variables={{ email: email }}>
+                  {({ data, loading, error }) => {
+                      if (loading) return <div>Loading</div>
+                      if (error) return <div>Error occurs when checking whether email is activated</div>
+                      console.log(data)
+                      setEmailExist(false)
+                      setEmailErr(true)
+                      if (data.confirm) {
+                        setEmailErrText("Account exists, please click the login button.")
+                      }
+                      else{
+                        setConfirmEmail(true)
+                      }
+                      return (null)
+                    }}
+                  </Query>}
+                {emailErr && <FormHelperText error>{emailErrText}</FormHelperText>}
+                {confirmEmail && <Mutation mutation = {SEND_EMAIL_MUTATION} variables={{email }} onError = {data => {
+                  setEmailErrText("Sending email verification occurs error.")}}>
+                {(confirmUser) => {return <Button onClick={(event) => handleConfirmEmail(event, confirmUser)} color = "secondary" variant = "outlined">Account already registered, Click here to send out activation email</Button>}}</Mutation>}
               </FormControl>
               <FormControl margin = "normal" fullWidth>
                 <InputLabel htmlFor = "nickname">
@@ -144,7 +208,7 @@ const Register = ({ classes, setNewUser }) => {
                 onClick = {() => {
                   nickname === "" && setNickname(GetRandomName)
                 }}
-                disabled={loading || !username.trim() || !password.trim() || (password !== validatePassword) || usernameExist}
+                disabled={loading || !username.trim() || !password.trim() || (password !== validatePassword) || usernameExist || emailErr}
                 className = {classes.submit}>
                   {loading ? "Registering..." : "Register"}
               </Button>
@@ -176,13 +240,13 @@ const Register = ({ classes, setNewUser }) => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            User {username} successfully created!
+            Confirmation email sent to {email}, please check your mailbox and activate your accont!
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" variant="contained" onClick={() => setNewUser(false)}>
-            Login
-          </Button>
+        <Mutation mutation = {SEND_EMAIL_MUTATION} variables={{email }}>
+                {(confirmUser) => {return <Button onClick={(event) => handleConfirmEmail(event, confirmUser)} onError = {data => {
+                  setOpen(false)}} color = "secondary" variant = "outlined">Send Again</Button>}}</Mutation>
         </DialogActions>
       </Dialog>
     </div>
@@ -200,9 +264,29 @@ mutation ($username: String!, $nickname: String!, $password:String!, $email:Stri
 }
 `
 
+const SEND_EMAIL_MUTATION = gql`
+mutation ($email:String!){
+  confirmUser(email:$email){
+    success
+  }
+}
+`
+
 const USERNAME_QUERY = gql`
 query ($username: String!){
-  exist(username: $username)
+  existUsername(username: $username)
+}
+`
+
+const EMAIL_EXIST_QUERY = gql`
+query ($email: String!){
+  existEmail(email: $email)
+}
+`
+
+const CONFIRM_QUERY = gql`
+query ($email: String!){
+  confirm(email: $email)
 }
 `
 
