@@ -8,7 +8,7 @@ import Loading from "../components/Shared/Loading";
 import Error from "../components/Shared/Error";
 
 const App = ({ classes }) => {
-  return (
+  return ( 
     <div className={classes.container}>
       <CreateRoom />
       <Query query={GET_ROOMS_QUERY}>
