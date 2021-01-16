@@ -9,17 +9,9 @@ class UserType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     user = graphene.Field(UserType, id=graphene.Int(required=True))
-    exist = graphene.Boolean(username=graphene.String(required=True))
     users = graphene.List(UserType)
     me = graphene.Field(UserType)
     
-    def resolve_exist(self, info, username): 
-        try:
-            get_user_model().objects.get(username=username)
-            return True
-        except get_user_model().DoesNotExist:
-            return False
-
     def resolve_user(self,info, id):
         return get_user_model().objects.get(id=id)
 
