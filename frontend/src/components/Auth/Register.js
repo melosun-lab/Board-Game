@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Mutation } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import FormControl from "@material-ui/core/FormControl";
+import { FormHelperText } from '@material-ui/core';
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -27,7 +29,6 @@ import Error from "../Shared/Error"
 function Transition(props) {
   return <Slide direction="up" {...props} />
 }
-
 function GetRandomName() {
   const first = firstNickname[Math.floor(Math.random() * firstNickname.length)]
   const last = lastNickName[Math.floor(Math.random() * lastNickName.length)]
@@ -39,29 +40,23 @@ const Register = ({ classes, setNewUser }) => {
   const [nickname, setNickname] = useState("")
   const [password, setPassword] = useState("")
   const [email, setEmail] = useState("")
+  const [validatePassword, setValidatePassword] = useState("")
   const [open, setOpen] = useState(false)
-<<<<<<< HEAD
   const [passwordErr, setPasswordErr] = useState(false)
   const [usernameExist, setUsernameExist] = useState(false)
   const [checkUsername, setCheckUsername] = useState(false)
   const [showPassword, setShowPassWord] = useState(false)
   const [showValidatePassword, setShowValidatePassword] = useState(false)
-=======
->>>>>>> parent of 9775630... Merge remote-tracking branch 'origin/Melo' into Mingkun
 
   const handleSubmit = (event, createUser) => {
     event.preventDefault()
     createUser()
   }
-<<<<<<< HEAD
-
   const handleValidateUsername = (event) => {
     setCheckUsername(true)
     setUsername(event.target.value)
   }
-
   const handleValidatePassword = (event) => {
-
     if(event.target.id === "validatePassword"){
       setValidatePassword(event.target.value)
       if (event.target.value !== password && !passwordErr){
@@ -90,9 +85,7 @@ const Register = ({ classes, setNewUser }) => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-=======
->>>>>>> parent of 9775630... Merge remote-tracking branch 'origin/Melo' into Mingkun
-  
+
   return (
   <div className = {classes.root}>
     <Paper className = {classes.paper}>
@@ -113,11 +106,21 @@ const Register = ({ classes, setNewUser }) => {
         {(createUser, { loading, error }) => {
           return(
             <form onSubmit={event => handleSubmit(event, createUser)} className = {classes.form}>
-              <FormControl margin = "normal" required fullWidth>
+              <FormControl error={usernameExist} margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "username">
                   Username
                 </InputLabel>
-                <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
+                <Input id = "username" onBlur = {event => handleValidateUsername(event)}/>
+                {checkUsername && <Query query={USERNAME_QUERY} variables={{ username: username }}>
+                  {({ data, loading, error }) => {
+                      if (loading) return <div>Loading</div>
+                      if (error) return <div>Error</div>
+                      setCheckUsername(false)
+                      setUsernameExist(data.exist)
+                      return (null)
+                    }}
+                  </Query>} 
+                {usernameExist && <FormHelperText error>{"Username already exist"}</FormHelperText>}
               </FormControl>
               <FormControl margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "email">
@@ -135,7 +138,6 @@ const Register = ({ classes, setNewUser }) => {
                 <InputLabel htmlFor = "password">
                   Password
                 </InputLabel>
-<<<<<<< HEAD
                 <Input id = "password" type = {showPassword ? "text" : "password"} onBlur = {event => handleValidatePassword(event)} endAdornment = 
               {
                 <InputAdornment position="end">
@@ -166,9 +168,6 @@ const Register = ({ classes, setNewUser }) => {
                 </InputAdornment>
               }/>
                 {passwordErr && <FormHelperText error>{"Password not the same"}</FormHelperText>}
-=======
-                <Input id = "password" type = "password" onChange = {event => setPassword(event.target.value)}/>
->>>>>>> parent of 9775630... Merge remote-tracking branch 'origin/Melo' into Mingkun
               </FormControl>
               <Button
                 type = "submit"
@@ -178,7 +177,7 @@ const Register = ({ classes, setNewUser }) => {
                 onClick = {() => {
                   nickname === "" && setNickname(GetRandomName)
                 }}
-                disabled={loading || !username.trim() || !password.trim()}
+                disabled={loading || !username.trim() || !password.trim() || (password !== validatePassword) || usernameExist}
                 className = {classes.submit}>
                   {loading ? "Registering..." : "Register"}
               </Button>
@@ -197,7 +196,6 @@ const Register = ({ classes, setNewUser }) => {
         }}
       </Mutation> 
     </Paper>
-
       {/* Success Dialog */}
       < Dialog
         open={open}
@@ -222,7 +220,6 @@ const Register = ({ classes, setNewUser }) => {
     </div>
     );
 };
-
 const REGISTER_MUTATION = gql`
 mutation ($username: String!, $nickname: String!, $password:String!, $email:String!){
   createUser(username:$username, nickname:$nickname, password:$password, email:$email){
@@ -233,7 +230,11 @@ mutation ($username: String!, $nickname: String!, $password:String!, $email:Stri
   }
 }
 `
-
+const USERNAME_QUERY = gql`
+query ($username: String!){
+  exist(username: $username)
+}
+`
 const styles = theme => ({
   root: {
     width: "auto",
@@ -275,10 +276,7 @@ const styles = theme => ({
     color: "green"
   }
 });
-
 export default withStyles(styles)(Register);
-
-
 const firstNickname = [
   "admirer",
   "arm",
@@ -388,7 +386,6 @@ const firstNickname = [
   "wisher",
   "wrath"
 ]
-
 const lastNickName = [
   "Aesir",
   "Axe",
