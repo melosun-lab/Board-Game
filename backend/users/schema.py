@@ -76,7 +76,7 @@ def sendEmail(user):
     'Activate your account for BoardGame',
     msg_plain,
     None,
-    [user.email],
+    ["uclaucsdgame@gmail.com"],
     fail_silently=False,
         )
 
