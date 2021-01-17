@@ -10,6 +10,8 @@ import { FormHelperText } from '@material-ui/core';
 import Paper from "@material-ui/core/Paper";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
+import InputAdornment from "@material-ui/core/InputAdornment"
+import IconButton from "@material-ui/core/IconButton"
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -19,6 +21,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import Gavel from "@material-ui/icons/Gavel";
 import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
+import Visibility  from "@material-ui/icons/Visibility"
+import VisibilityOff from "@material-ui/icons/VisibilityOff"
 import { create } from "jss";
 import Error from "../Shared/Error"
 
@@ -43,7 +47,8 @@ const Register = ({ classes, setNewUser }) => {
 
   const [usernameExist, setUsernameExist] = useState(false)
   const [checkUsername, setCheckUsername] = useState(false)
-
+  const [showPassword, setShowPassWord] = useState(false)
+  const [showValidatePassword, setShowValidatePassword] = useState(false)
   const [confirmEmail, setConfirmEmail] = useState(false)
   const [checkEmail, setCheckEmail] = useState(false)
   const [emailExist, setEmailExist] = useState(false)
@@ -107,6 +112,16 @@ const Register = ({ classes, setNewUser }) => {
     }
   }
   
+  const handleClickShowPassword = () =>{
+    setShowPassWord(!showPassword)
+  }
+  const handleClickShowValidatePassword = () =>{
+    setShowValidatePassword(!showValidatePassword)
+  }
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   return (
   <div className = {classes.root}>
     <Paper className = {classes.paper}>
@@ -191,13 +206,35 @@ const Register = ({ classes, setNewUser }) => {
                 <InputLabel htmlFor = "password">
                   Password
                 </InputLabel>
-                <Input id = "password" type = "password" onBlur = {event => handleValidatePassword(event)}/>
+                <Input id = "password" type = {showPassword ? "text" : "password"} onBlur = {event => handleValidatePassword(event)} endAdornment = 
+              {
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }/>
               </FormControl>
               <FormControl error={passwordErr} margin = "normal" required fullWidth>
                 <InputLabel htmlFor = "validatePassword">
                   Confirm Password
                 </InputLabel>
-                <Input id = "validatePassword" type = "password" onBlur = {event => handleValidatePassword(event)}/>
+                <Input id = "validatePassword" type = {showValidatePassword ? "text" : "password"} onBlur = {event => handleValidatePassword(event)} endAdornment = 
+              {
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowValidatePassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showValidatePassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }/>
                 {passwordErr && <FormHelperText error>{"Password not the same"}</FormHelperText>}
               </FormControl>
               <Button
