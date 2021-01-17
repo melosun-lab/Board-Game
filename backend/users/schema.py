@@ -27,7 +27,7 @@ class Query(graphene.ObjectType):
         try:
             get_user_model().objects.get(email=email)
             return True
-        except:
+        except get_user_model().DoesNotExist:
             return False
 
     def resolve_existUsername(self, info, username): 
@@ -63,8 +63,6 @@ class CreateUser(graphene.Mutation):
         user.set_password(password)
         user.is_confirmed = False
         user.save()
-        payload = jwt_payload(user)
-        token = jwt_encode(payload)
         sendEmail(user)
         
         return CreateUser(user=user)
