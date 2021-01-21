@@ -8,8 +8,9 @@ import App from './pages/App';
 import Profile from './pages/Profile';
 import Header from './components/Shared/Header'
 
+export const UserContext = React.createContext()
 const Root = () => (
-    <Query query={ME_QUERY}>
+    <Query query={ME_QUERY} fetchPolicy='cache-and-network'>
         {({ data, loading, error }) => {
             if (loading) return <div>Loading</div>
             if (error) return <div>Error</div>
@@ -17,14 +18,14 @@ const Root = () => (
             if (!currentUser.isConfirmed) return <div>Not Activated Account</div>
             return (
                 <Router>
-                    <>
-                    <Header currentUser={currentUser}/>
-                    <Switch>
-                        <Route exact path="/" component={App} />
-                        <Redirect from="/verify-email/:token" to="/"/>
-                        <Route path="/profile/:id" component={Profile}/>
-                    </Switch>
-                    </>
+                    <UserContext.Provider value={currentUser}>
+                        <Header currentUser={currentUser}/>
+                        <Switch>
+                            <Route exact path="/" component={App} />
+                            <Redirect from="/verify-email/:token" to="/"/>
+                            <Route path="/profile/:id" component={Profile}/>
+                        </Switch>
+                    </UserContext.Provider>
                 </Router>
             )
         }}
