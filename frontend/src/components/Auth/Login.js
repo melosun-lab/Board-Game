@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Mutation } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
@@ -32,14 +33,15 @@ const Login = ({ classes, setNewUser }) => {
   const [password, setPassword] = useState("")
   const [loginErrMsg, setLoginErrMsg] = useState("")
   const [showPassword, setShowPassWord] = useState(false)
-
+  const [checkConfirm, setCheckConfirm] = useState(false)
+  const [open, setOpen] = useState(false)
   const handleSubmit = async (event, error, tokenAuth, client) => {   
     event.preventDefault()
     const res = await tokenAuth()
 
     if (res){
       localStorage.setItem('authToken', res.data.tokenAuth.token)
-      client.writeData({ data: { isLoggedIn: true} })
+      setCheckConfirm(true)
     }
   }
 
@@ -50,6 +52,11 @@ const Login = ({ classes, setNewUser }) => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  const handleConfirmEmail = (event, confirmUser) => {
+    event.preventDefault()
+    confirmUser()
+  }
 
   return (
     <div className = {classes.root}>
@@ -74,13 +81,19 @@ const Login = ({ classes, setNewUser }) => {
                   <InputLabel htmlFor = "username">
                     Username
                   </InputLabel>
-                  <Input id = "username" onChange = {event => setUsername(event.target.value)}/>
+                  <Input id = "username" onChange = {event => {
+                    setUsername(event.target.value)
+                    setLoginErrMsg("")
+                    }}/>
                 </FormControl>
                 <FormControl margin = "normal" required fullWidth>
                   <InputLabel htmlFor = "password">
                     Password
                   </InputLabel>
-                  <Input id = "password" type = {showPassword ? "text" : "password"} onChange = {event => setPassword(event.target.value)} endAdornment = 
+                  <Input id = "password" type = {showPassword ? "text" : "password"} onChange = {event => {
+                    setPassword(event.target.value)
+                    setLoginErrMsg("")
+                  }} endAdornment = 
               {
                 <InputAdornment position="end">
                   <IconButton
@@ -94,6 +107,20 @@ const Login = ({ classes, setNewUser }) => {
               }/>
                 </FormControl>
                 <span style={{color: "red"}}>{loginErrMsg}</span>
+                {checkConfirm && <Query query={CONFIRM_QUERY} fetchPolicy='network-only'>
+                  {({ data, loading, error }) => {
+                      if (loading) return <div>Loading</div>
+                      if (error) return <div>Error occurs when checking whether user is activated</div>
+                      setCheckConfirm(false)
+                      if(data.confirm){
+                        client.writeData({ data: { isLoggedIn: true} })
+                      }
+                      else{
+                        setOpen(!data.confirm)
+                      }
+                      return (null)
+                    }}
+                  </Query>}
                 <Button
                   type = "submit"
                   fullWidth
@@ -119,6 +146,26 @@ const Login = ({ classes, setNewUser }) => {
           }}
         </Mutation> 
       </Paper>
+      < Dialog
+        open={open}
+        disableBackdropClick={true}
+        TransitionComponent={Transition}
+      >
+        <DialogContent>
+          <DialogContentText>
+            The account is not activated, please click the button below and check your mailbox to activate your accont!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+        <Mutation mutation = {SEND_EMAIL_MUTATION} onCompleted={data => {
+                    localStorage.removeItem("authToken")
+                    setOpen(false)
+                  }} onError = {data => {
+                    localStorage.removeItem("authToken")
+                    setOpen(false)}}>
+                {(confirmUser) => {return <Button onClick={(event) => handleConfirmEmail(event, confirmUser)} color = "secondary" variant = "outlined">Send</Button>}}</Mutation>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 };
@@ -129,6 +176,19 @@ const LOGIN_MUTATION = gql`
       token
     }
   }
+`
+const CONFIRM_QUERY = gql`
+query{
+  confirm
+}
+`
+
+const SEND_EMAIL_MUTATION = gql`
+mutation{
+  confirmUser{
+    success
+  }
+}
 `
 
 const styles = theme => ({

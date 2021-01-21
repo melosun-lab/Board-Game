@@ -45,9 +45,9 @@ INSTALLED_APPS = [
     'users'
 ]
 
-GRAPHQL_JWT = {
-    'JWT_VERIFY_EXPIRATION': True,
-}
+# GRAPHQL_JWT = {
+#     'JWT_VERIFY_EXPIRATION': True,
+# }
 
 
 GRAPHENE = {

@@ -14,14 +14,20 @@ class UserType(DjangoObjectType):
 class Query(graphene.ObjectType):
     user = graphene.Field(UserType, id=graphene.Int(required=True))
     existUsername = graphene.Boolean(username=graphene.String(required=True))
-    confirm = graphene.Boolean(email=graphene.String(required=True))
+    confirm = graphene.Boolean(email=graphene.String())
     existEmail = graphene.Boolean(email=graphene.String(required=True))
     users = graphene.List(UserType)
     me = graphene.Field(UserType)
 
-    def resolve_confirm(self, info, email):
-        user = get_user_model().objects.get(email=email)
-        return user.is_confirmed
+    def resolve_confirm(self, info, email=None):
+        if email:
+            user = get_user_model().objects.get(email=email)
+            return user.is_confirmed
+        else:
+            user = info.context.user
+            if user.is_anonymous:
+                raise Exception('Not logged in!')
+            return user.is_confirmed
 
     def resolve_existEmail(self, info, email):
         try:
@@ -87,17 +93,16 @@ class ConfirmUser(graphene.Mutation):
     class Arguments:
         email = graphene.String()
     
-    def mutate(self, info, email):
-        print("enter here")
-        user = get_user_model().objects.get(email=email)
-        sendEmail(user)
+    def mutate(self, info, email=None):
+        if (email):
+            user = get_user_model().objects.get(email=email)
+            sendEmail(user)
+        else:
+            user = info.context.user
+            if user.is_anonymous:
+                raise Exception('Not logged in!')
+            sendEmail(user)
         return ConfirmUser(success=True)
-        # try:
-        #     sendEmail(user)
-        #     return ConfirmUser(success=True)
-        # except:
-        #     return ConfirmUser(success=False)
-
 
 
 class UpdateUser(graphene.Mutation):

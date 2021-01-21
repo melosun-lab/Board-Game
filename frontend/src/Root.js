@@ -14,6 +14,7 @@ const Root = () => (
             if (loading) return <div>Loading</div>
             if (error) return <div>Error</div>
             const currentUser = data.me
+            if (!currentUser.isConfirmed) return <div>Not Activated Account</div>
             return (
                 <Router>
                     <>
@@ -37,6 +38,7 @@ const ME_QUERY = gql`
             username
             nickname
             email
+            isConfirmed
         }
     }
 `
