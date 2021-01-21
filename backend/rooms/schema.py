@@ -2,15 +2,25 @@ import graphene
 from graphene_django import DjangoObjectType
 from .models import Room
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 class RoomType(DjangoObjectType):
     class Meta:
         model = Room
 
 class Query(graphene.ObjectType):
-    rooms = graphene.List(RoomType)
+    rooms = graphene.List(RoomType, search=graphene.String())
 
-    def resolve_rooms(self, info):
+    def resolve_rooms(self, info, search=None):
+        if search: 
+            filter = (
+                Q(name__icontains=search) |
+                Q(game__icontains=search) |
+                Q(capacity__icontains=search) |
+                Q(members__icontains=search) |
+                Q(owner__username__icontains=search)
+            )
+            return Room.objects.filter(filter)
         return Room.objects.all()
 
 class CreateRoom(graphene.Mutation):

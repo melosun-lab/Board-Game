@@ -55,8 +55,8 @@ const RoomList = ({ classes, rooms }) => (
           </Typography>
         </ExpansionPanelDetails>
         <ExpansionPanelActions>
-          <UpdateRoom />
-          <DeleteRoom />
+          <UpdateRoom room={room} />
+          <DeleteRoom room={room} />
         </ExpansionPanelActions>
       </ExpansionPanel>
     ))}
