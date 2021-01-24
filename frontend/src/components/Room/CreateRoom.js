@@ -21,6 +21,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Error from "../Shared/Error";
 import Loading from "../Shared/Loading";
 import { GET_ROOMS_QUERY } from "../../pages/App";
+import { ME_QUERY } from "../../Root";
 
 const CreateRoom = ({ classes }) => {
   const [open, setOpen] = useState(false)
@@ -46,7 +47,7 @@ const CreateRoom = ({ classes }) => {
       onCompleted={data => {
         setOpen(false)
       }}
-      refetchQueries={() => [{ query: GET_ROOMS_QUERY }]}
+      refetchQueries={() => [{ query: GET_ROOMS_QUERY }, { query: ME_QUERY }]}
     >
       {(createRoom, { loading, error }) => {
         if (loading) return <Loading />
