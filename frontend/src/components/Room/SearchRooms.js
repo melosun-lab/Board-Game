@@ -23,7 +23,8 @@ const SearchRooms = ({ classes, setSearchResults }) => {
     event.preventDefault()
     const res = await client.query({
       query: SEARCH_ROOMS_QUERY,
-      variables: { search }
+      variables: { search },
+      pollInterval: 1000
     })
     setSearchResults(res.data.rooms)
   }
@@ -55,13 +56,16 @@ const SearchRooms = ({ classes, setSearchResults }) => {
   )
 };
 
-const SEARCH_ROOMS_QUERY = gql`
+export const SEARCH_ROOMS_QUERY = gql`
   query($search: String) {
     rooms(search: $search) {
       id
       url
       capacity
-      members
+      members{
+        id
+        username
+      }
       name
       game
       owner {

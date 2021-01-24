@@ -21,7 +21,7 @@ const RoomList = ({ classes, rooms }) => (
       <ExpansionPanel key={room.id}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} >
           <ListItem className={classes.root}>
-            <JoinRoom />
+            <JoinRoom roomId={room.id} />
             <ListItemText
               primaryTypographyProps={{
                 variant: "subheading",
@@ -49,7 +49,7 @@ const RoomList = ({ classes, rooms }) => (
             <br />
             {`Capacity: ${room.capacity}`}
             <br />
-            {`Members: ${room.members}`}
+            {`Members: ${room.members.map(member => (member.username))}`}
             <br />
             {`Url: ${room.url}`}
           </Typography>

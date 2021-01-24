@@ -31,8 +31,7 @@ const CreateRoom = ({ classes }) => {
   const handleSubmit = (event, createRoom) => {
     event.preventDefault()
     const url = "game.com"
-    const members = ""
-    createRoom({ variables: { capacity, name, game, url, members}})
+    createRoom({ variables: { capacity, name, game, url}})
   }
   return (
     <>
@@ -107,8 +106,8 @@ const CreateRoom = ({ classes }) => {
 };
 
 const CREATE_ROOM_MUTATION = gql `
-  mutation ($capacity: String!, $name: String!, $game: String!, $url: String!, $members: String!){
-    createRoom(capacity: $capacity, name: $name, game: $game, url: $url, members: $members) {
+  mutation ($capacity: String!, $name: String!, $game: String!, $url: String!){
+    createRoom(capacity: $capacity, name: $name, game: $game, url: $url) {
       room {
         id
         capacity

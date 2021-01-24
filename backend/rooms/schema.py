@@ -12,6 +12,7 @@ class Query(graphene.ObjectType):
     rooms = graphene.List(RoomType, search=graphene.String())
 
     def resolve_rooms(self, info, search=None):
+        print("Query rooms!")
         if search: 
             filter = (
                 Q(name__icontains=search) |
@@ -29,17 +30,16 @@ class CreateRoom(graphene.Mutation):
     class Arguments:
         capacity = graphene.String()
         url = graphene.String()
-        members = graphene.String()
         name = graphene.String()
         game = graphene.String()
 
-    def mutate(self, info, capacity, url, members, name, game):
+    def mutate(self, info, capacity, url, name, game):
         user = info.context.user
 
         if user.is_anonymous:
             raise Exception('Log in to create a room.')
 
-        room = Room(capacity=capacity, url = url, members = user.username, owner = user, name = name, game = game)
+        room = Room(capacity=capacity, url = url, owner = user, name = name, game = game)
         room.save()
         return CreateRoom(room=room)
 
@@ -58,14 +58,14 @@ class UpdateRoom(graphene.Mutation):
         user =  info.context.user
         room = Room.objects.get(id = id)
 
-        if room.owner != user:
-            raise Exception("Not permitted to update this room.")
+        # if room.owner != user:
+        #     raise Exception("Not permitted to update this room.")
         if capacity:
             room.capacity = capacity
         if url:
             room.url = url
         if members:
-            room.members = members
+            room.members.add(user)
         if name:
             room.name = name
         if game:

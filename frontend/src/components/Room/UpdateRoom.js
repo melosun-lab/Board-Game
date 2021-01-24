@@ -115,7 +115,10 @@ const UPDATE_ROOM_MUTATION = gql`
         id
         url
         capacity
-        members
+        members{
+          id
+          username
+        }
         name
         game
         owner {

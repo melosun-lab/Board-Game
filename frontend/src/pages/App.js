@@ -14,10 +14,11 @@ const App = ({ classes }) => {
     <div className={classes.container}>
       <SearchRooms setSearchResults={setSearchResults} />
       <CreateRoom />
-      <Query query={GET_ROOMS_QUERY}>
+      <Query query={GET_ROOMS_QUERY} pollInterval={1000}>
         {({ data, loading, error}) => {
           if (loading) return <Loading />
           if (error) return <Error error={error} />
+          console.log(data)
           const rooms = searchResults.length > 0 ? searchResults : data.rooms
           return <RoomList rooms={rooms} />
         }}
@@ -32,7 +33,10 @@ export const GET_ROOMS_QUERY = gql`
       id
       url
       capacity
-      members
+      members{
+        id
+        username
+      }
       name
       game
       owner {

@@ -32,7 +32,7 @@ const Root = () => (
     </Query>
 )
 
-const ME_QUERY = gql`
+export const ME_QUERY = gql`
     {
         me {
             id
@@ -40,6 +40,12 @@ const ME_QUERY = gql`
             nickname
             email
             isConfirmed
+            ownerset{
+                id
+            }
+            memberset{
+                id
+            }
         }
     }
 `
