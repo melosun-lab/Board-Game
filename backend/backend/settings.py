@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-from setEnv import EMAIL_HOST,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD, SECRET_KEY
+# from setEnv import EMAIL_HOST,EMAIL_HOST_USER,EMAIL_HOST_PASSWORD, SECRET_KEY
 from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +29,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # CSRF_COOKIE_SECURE = True
 # SESSION_COOKIE_SECURE = True
@@ -161,6 +162,9 @@ STATICFILES_DIRS = (
 )
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_HOST_USER =  os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  
 EMAIL_PORT = 465  
 EMAIL_USE_SSL = True 
