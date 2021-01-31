@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 
 import {ApolloProvider, Query} from 'react-apollo';
-import ApolloClient, { createOperation, gql } from 'apollo-boost';
+import ApolloClient, { gql } from 'apollo-boost';
 import Root from "./Root";
 import Auth from './components/Auth';
 

@@ -13,7 +13,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import JoinRoom from "./JoinRoom";
 import DeleteRoom from "./DeleteRoom";
 import UpdateRoom from "./UpdateRoom";
-import CreateRoom from "./CreateRoom";
+// import CreateRoom from "./CreateRoom";
 
 const RoomList = ({ classes, rooms }) => (
   <List>

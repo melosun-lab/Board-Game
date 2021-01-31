@@ -7,7 +7,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import Paper from "@material-ui/core/Paper";
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
-import { Icon } from "@material-ui/core";
+// import { Icon } from "@material-ui/core";
 
 const SearchRooms = ({ classes, setSearchResults }) => {
   const [search, setSearch] = useState("")

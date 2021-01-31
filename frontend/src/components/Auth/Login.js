@@ -15,14 +15,14 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+// import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import Slide from "@material-ui/core/Slide";
-import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
+// import VerifiedUserTwoTone from "@material-ui/icons/VerifiedUserTwoTone";
 import Visibility  from "@material-ui/icons/Visibility"
 import VisibilityOff from "@material-ui/icons/VisibilityOff"
 import Lock from "@material-ui/icons/Lock";
-import Error from "../Shared/Error"
+// import Error from "../Shared/Error"
 
 function Transition(props) {
   return <Slide direction="up" {...props} />

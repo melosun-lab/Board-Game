@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Mutation } from 'react-apollo';
-import { Query } from 'react-apollo';
+// import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
-import Error from "../Shared/Error"
+// import Error from "../Shared/Error"
 const Verify = ({ classes, match }) => {
 
   const token = match.params.token;
