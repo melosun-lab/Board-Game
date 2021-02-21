@@ -11,16 +11,16 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
+// import FormHelperText from "@material-ui/core/FormHelperText";
+// import DialogTitle from "@material-ui/core/DialogTitle";
+// import CircularProgress from "@material-ui/core/CircularProgress";
+// import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import Error from "../Shared/Error";
 import Loading from "../Shared/Loading";
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import { GET_ROOMS_QUERY } from "../../pages/App";
+// import { GET_ROOMS_QUERY } from "../../pages/App";
 import { UserContext } from "../../Root";
 const UpdateRoom = ({ classes, room }) => {
   const currentUser = useContext(UserContext)
@@ -115,7 +115,10 @@ const UPDATE_ROOM_MUTATION = gql`
         id
         url
         capacity
-        members
+        members{
+          id
+          username
+        }
         name
         game
         owner {

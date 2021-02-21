@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import withRoot from "./withRoot";
 import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
@@ -14,12 +15,14 @@ const Root = () => (
             if (loading) return <div>Loading</div>
             if (error) return <div>Error</div>
             const currentUser = data.me
+            if (!currentUser.isConfirmed) return <div>Not Activated Account</div>
             return (
                 <Router>
                     <UserContext.Provider value={currentUser}>
                         <Header currentUser={currentUser}/>
                         <Switch>
                             <Route exact path="/" component={App} />
+                            <Redirect from="/verify-email/:token" to="/"/>
                             <Route path="/profile/:id" component={Profile}/>
                         </Switch>
                     </UserContext.Provider>
@@ -29,13 +32,20 @@ const Root = () => (
     </Query>
 )
 
-const ME_QUERY = gql`
+export const ME_QUERY = gql`
     {
         me {
             id
             username
             nickname
             email
+            isConfirmed
+            ownerset{
+                id
+            }
+            memberset{
+                id
+            }
         }
     }
 `

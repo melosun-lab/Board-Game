@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import withRoot from "../../withRoot";
-import Login from './Login';
-import Register from './Register';
+import Initial from './Initial';
+import Verify from './Verify';
 
 export default withRoot(() => {
-  const [newUser, setNewUser] = useState(true)
-  return newUser ? (
-    <Register setNewUser={setNewUser} />
-  ) : (
-    <Login setNewUser={setNewUser}/>
-  )
+  return (
+    <Router>
+        <Switch>
+            <Route exact path="/" component={Initial} />
+            <Route path="/verify-email/:token" component={Verify}/>
+        </Switch>
+    </Router>
+)
 });

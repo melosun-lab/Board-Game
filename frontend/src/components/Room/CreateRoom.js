@@ -6,21 +6,22 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+// import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
+// import FormHelperText from "@material-ui/core/FormHelperText";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress";
+// import CircularProgress from "@material-ui/core/CircularProgress";
 import AddIcon from "@material-ui/icons/Add";
 import ClearIcon from "@material-ui/icons/Clear";
-import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
+// import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Error from "../Shared/Error";
 import Loading from "../Shared/Loading";
 import { GET_ROOMS_QUERY } from "../../pages/App";
+import { ME_QUERY } from "../../Root";
 
 const CreateRoom = ({ classes }) => {
   const [open, setOpen] = useState(false)
@@ -31,8 +32,7 @@ const CreateRoom = ({ classes }) => {
   const handleSubmit = (event, createRoom) => {
     event.preventDefault()
     const url = "game.com"
-    const members = ""
-    createRoom({ variables: { capacity, name, game, url, members}})
+    createRoom({ variables: { capacity, name, game, url}})
   }
   return (
     <>
@@ -47,7 +47,7 @@ const CreateRoom = ({ classes }) => {
       onCompleted={data => {
         setOpen(false)
       }}
-      refetchQueries={() => [{ query: GET_ROOMS_QUERY }]}
+      refetchQueries={() => [{ query: GET_ROOMS_QUERY }, { query: ME_QUERY }]}
     >
       {(createRoom, { loading, error }) => {
         if (loading) return <Loading />
@@ -107,8 +107,8 @@ const CreateRoom = ({ classes }) => {
 };
 
 const CREATE_ROOM_MUTATION = gql `
-  mutation ($capacity: String!, $name: String!, $game: String!, $url: String!, $members: String!){
-    createRoom(capacity: $capacity, name: $name, game: $game, url: $url, members: $members) {
+  mutation ($capacity: String!, $name: String!, $game: String!, $url: String!){
+    createRoom(capacity: $capacity, name: $name, game: $game, url: $url) {
       room {
         id
         capacity
