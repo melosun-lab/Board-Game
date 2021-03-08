@@ -8,7 +8,7 @@ import Root from "./Root";
 import Auth from './components/Auth';
 
 const client = new ApolloClient({
-    uri: 'http://localhost:8000/graphql/',
+    uri: 'https://warm-plains-03771.herokuapp.com/graphql/',
     fetchOptions: {
         credentials: "include"
     },
