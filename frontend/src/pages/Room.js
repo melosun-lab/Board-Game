@@ -21,8 +21,8 @@ const Room = ({ classes, match }) => {
       const isUserOwner = (data.roomid.owner.id === currentUser.id);
       const isUserMember = (data.roomid.members.findIndex(({ id }) => id === currentUser.id) > -1);
       if (!isUserMember && !isUserOwner) return <div>Not owner or member of this room</div>
-      if (isUserOwner) return <RoomOwner></RoomOwner>
-      else return <RoomMember></RoomMember>
+      if (isUserOwner) return <RoomOwner roomid={roomid}></RoomOwner>
+      else return <RoomMember roomid={roomid}></RoomMember>
     }}
   </Query>
   Room

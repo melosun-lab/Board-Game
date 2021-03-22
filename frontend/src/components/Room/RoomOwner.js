@@ -2,7 +2,7 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 
-const RoomOwner = ({ classes }) => {
+const RoomOwner = ({ classes, roomid }) => {
   return <div>Owner of the room</div>;
 };
 

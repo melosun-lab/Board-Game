@@ -16,7 +16,7 @@ const Header = ({ classes, currentUser }) => {
         {/* Title / Logo */}
         <Link to="/" className={classes.grow}>
           <RadioIcon className={classes.logo} color="secondary" />
-          <Typography variant="headline" color="secondary" noWrap>
+          <Typography color="secondary" noWrap>
             GAMES!
           </Typography>
         </Link>
@@ -25,7 +25,7 @@ const Header = ({ classes, currentUser }) => {
         {currentUser && (
           <Link to={`/profile/${currentUser.id}`} className={classes.grow}>
             <FaceIcon className={classes.faceIcon} />
-            <Typography variant="headline" className={classes.username} noWrap>
+            <Typography className={classes.username} noWrap>
               {currentUser.username}
             </Typography>
           </Link>
