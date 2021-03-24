@@ -67,6 +67,7 @@ const RoomMember = ({ classes, roomdata }) => {
   const restore = (drawing) => {
     if(!drawing){
       clearCanvas();
+      return;
     }
     var Img = new Image();
     var current = drawing;
