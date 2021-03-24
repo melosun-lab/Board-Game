@@ -128,7 +128,7 @@ const Register = ({ classes, setNewUser }) => {
       <Avatar className = {classes.avatar}>
         <Gavel />
       </Avatar>  
-      <Typography variant = "headline">
+      <Typography>
         Register
       </Typography>
       <Mutation 

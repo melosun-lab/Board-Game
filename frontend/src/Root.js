@@ -6,6 +6,7 @@ import { Query } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import App from './pages/App';
 import Profile from './pages/Profile';
+import Room from './pages/Room';
 import Header from './components/Shared/Header'
 
 export const UserContext = React.createContext()
@@ -24,6 +25,7 @@ const Root = () => (
                             <Route exact path="/" component={App} />
                             <Redirect from="/verify-email/:token" to="/"/>
                             <Route path="/profile/:id" component={Profile}/>
+                            <Route path="/room/:rid" component={Room}/>
                         </Switch>
                     </UserContext.Provider>
                 </Router>
