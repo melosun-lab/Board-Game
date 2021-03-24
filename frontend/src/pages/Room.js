@@ -44,6 +44,7 @@ query ($id: Int!){
           drawing
           username
       }
+      content
   }
 }
 `

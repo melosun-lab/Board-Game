@@ -84,6 +84,11 @@ const RoomMember = ({ classes, roomdata }) => {
   return (
     <div>
       <div>
+        <p>
+          The current drawing target is: {roomdata.content}
+        </p>
+      </div>
+      <div>
       <canvas 
     onMouseDown={startDrawing}
     onMouseUp={finishDrawing}
