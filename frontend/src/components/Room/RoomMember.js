@@ -1,12 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Button from "@material-ui/core/Button";
 import { Mutation } from "react-apollo";
 import { gql } from "apollo-boost";
 import { Query } from 'react-apollo';
-
-const RoomMember = ({ classes, roomid }) => {
-  console.log(roomid)
+import List from "@material-ui/core/List";
+import { UserContext} from "../../Root";
+const RoomMember = ({ classes, roomdata }) => {
+  console.log(roomdata)
+  const currentUser = useContext(UserContext);
+  console.log(currentUser.id)
   const [isDrawing, setIsDrawing] = useState(false)
   const [content, setContent] = useState("")
   const canvasRef = useRef(null)
@@ -24,8 +27,20 @@ const RoomMember = ({ classes, roomid }) => {
     context.lineCap = "round"
     context.strokeStyle = "black"
     context.lineWidth = 5
+
+    context.fillStyle = "white"
+    context.fillRect(0, 0, canvas.width, canvas.height)
+
     contextRef.current = context;
   },[])
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d")
+    context.fillStyle = "white"
+    context.fillRect(0, 0, canvas.width, canvas.height)
+  }
+  
   const startDrawing = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
     contextRef.current.beginPath();
@@ -49,53 +64,68 @@ const RoomMember = ({ classes, roomid }) => {
     var dataImg = canvasRef.current.toDataURL('image/png');
     console.log(JSON.stringify(dataImg));
   }
-  const restore = (data) => {
-    if(!data.roomid.content){
+  const restore = (drawing) => {
+    if(!drawing){
+      clearCanvas();
       return;
     }
     var Img = new Image();
-    var current = data.roomid.content;
+    var current = drawing;
     if (current.substr(0,1) === '"' && current.substr(-1) === '"'){
       current = current.substr(1);
       current = current.substr(0, current.length-1);
     }
     Img.src = current;
-    contextRef.current.drawImage(Img,0,0,window.innerWidth/2,window.innerHeight/2);
-  }
+    Img.onload = () =>{
+      contextRef.current.drawImage(Img,0,0,window.innerWidth/2,window.innerHeight/2);
+    }
+    }
 
   return (
     <div>
+      <div>
+        <p>
+          The current drawing target is: {roomdata.content}
+        </p>
+      </div>
+      <div>
       <canvas 
     onMouseDown={startDrawing}
     onMouseUp={finishDrawing}
     onMouseMove={draw}
     ref={canvasRef}
-    />
+    /></div>
+      <List>
+        {roomdata.members.map(member =>
+          <Button key={member.id} color = "secondary" variant = "outlined"
+          onClick={()=> restore(member.drawing)}
+          >{member.username}</Button>
+        )
+        }
+        <Button color = "secondary" variant = "outlined"
+        onClick={()=> restore(roomdata.owner.drawing)}
+        >{roomdata.owner.username}</Button>
+      </List>
     <Mutation
-      mutation = {UPDATE_CONTENT_MUTATION}
-      variables = {{ id: roomid, content: content}}
+      mutation = {UPDATE_DRAWING_MUTATION}
+      variables = {{ username: currentUser.username, drawing: content}}
       onCompleted = {data => {
         console.log({ data });
       }}
       >
-      {updateRoom => (
+      {updateUser => (
       <Button  color = "secondary"
       variant = "outlined" onClick={event =>{
         event.stopPropagation();
-        updateRoom();
+        updateUser();
       }}>
         SAVE
       </Button>
     )}</Mutation>
-    <Query query={ROOM_CONTENT_QUERY} variables={{ id: roomid }} pollInterval={1000} >
-    {({ data, loading, error}) => {
-        return <Button
-          color = "secondary"
-          variant = "outlined"
-          onClick = {() => restore(data)}
-          >Restore</Button>
-    }}
-  </Query>
+    <Button color = "secondary"
+      variant = "outlined" onClick={clearCanvas}>
+        CLEAR
+      </Button>
     </div>
   );
 };
@@ -141,10 +171,10 @@ const styles = theme => ({
 
 export default withStyles(styles)(RoomMember);
 
-const UPDATE_CONTENT_MUTATION = gql `
-  mutation ($id: Int!, $content: String!){
-    updateRoom(id: $id, content: $content) {
-      room {
+const UPDATE_DRAWING_MUTATION = gql `
+  mutation ($username: String!, $drawing: String!){
+    updateUser(username: $username, drawing: $drawing) {
+      user {
         id
       }
     }

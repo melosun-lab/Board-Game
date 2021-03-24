@@ -1,10 +1,63 @@
-import React from "react";
+import React, { useState} from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-
-
-const RoomOwner = ({ classes, roomid }) => {
-  return <div>Owner of the room</div>;
+import { Mutation } from "react-apollo";
+import { gql } from "apollo-boost";
+import FormControl from "@material-ui/core/FormControl";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import Button from "@material-ui/core/Button";
+import RoomMember from "./RoomMember";
+const RoomOwner = ({ classes, roomdata }) => {
+  const [content, setContent] = useState("")
+  const handleSubmit = (event, updateRoom) => {
+    event.preventDefault()
+    updateRoom()
+  }
+  return (<div>
+    <Mutation 
+        mutation = {UPDATE_CONTENT_MUTATION} 
+        variables={{ id: roomdata.id, content: content}} 
+        onCompleted={data => {
+          console.log({ data })
+        }}
+      >
+        {(updateRoom, { loading, error }) => {
+          return(
+            <form onSubmit={event => handleSubmit(event, updateRoom)} className = {classes.form}>
+              <div>
+              <FormControl margin = "normal" required>
+                <InputLabel htmlFor = "content">
+                  Drawing Target
+                </InputLabel>
+                <Input id = "content" onChange = {event => setContent(event.target.value)}/>
+              </FormControl>
+              </div>
+              <div>
+              <Button
+                type = "submit"
+                variant = "contained"
+                color = "secondary"
+                className = {classes.submit}>
+                  {loading ? "Setting..." : "Set Draw Target"}
+              </Button>
+              </div>
+            </form>
+          )
+        }}
+      </Mutation> 
+      <RoomMember roomdata={roomdata}></RoomMember></div>);
 };
+
+const UPDATE_CONTENT_MUTATION = gql `
+  mutation ($id: Int!, $content: String!){
+    updateRoom(id: $id, content: $content) {
+      room {
+        id
+        content
+      }
+    }
+  }
+`
 
 const styles = theme => ({
   paper: {

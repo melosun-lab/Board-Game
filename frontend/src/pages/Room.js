@@ -14,18 +14,17 @@ const Room = ({ classes, match }) => {
   console.log(roomid);
   return (
       <div>
-    <Query query={GET_ROOM_QUERY} variables={{ id: roomid }} >
+    <Query query={GET_ROOM_QUERY} variables={{ id: roomid }} pollInterval={1000}>
     {({ data, loading, error}) => {
       if (loading) return <Loading />
       if (error) return <Error error={error} />
       const isUserOwner = (data.roomid.owner.id === currentUser.id);
       const isUserMember = (data.roomid.members.findIndex(({ id }) => id === currentUser.id) > -1);
       if (!isUserMember && !isUserOwner) return <div>Not owner or member of this room</div>
-      if (isUserOwner) return <RoomOwner roomid={roomid}></RoomOwner>
-      else return <RoomMember roomid={roomid}></RoomMember>
+      if (isUserOwner) return <RoomOwner roomdata={data.roomid}></RoomOwner>
+      else return <RoomMember roomdata={data.roomid}></RoomMember>
     }}
   </Query>
-  Room
       </div>
   );
 };
@@ -37,10 +36,15 @@ query ($id: Int!){
       id
       members{
           id
+          drawing
+          username
       }
       owner{
           id
+          drawing
+          username
       }
+      content
   }
 }
 `
