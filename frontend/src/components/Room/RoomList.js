@@ -13,6 +13,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import JoinRoom from "./JoinRoom";
 import DeleteRoom from "./DeleteRoom";
 import UpdateRoom from "./UpdateRoom";
+import Button from "@material-ui/core/Button";
 // import CreateRoom from "./CreateRoom";
 
 const RoomList = ({ classes, rooms }) => (
@@ -51,7 +52,10 @@ const RoomList = ({ classes, rooms }) => (
             <br />
             {`Members: ${room.members.map(member => (member.username))}`}
             <br />
-            {`Url: ${room.url}`}
+            <Link className={classes.link} to={`/room/${room.id}`}>
+              <Button color = "secondary"
+      variant = "outlined">GO TO THIS ROOM</Button>
+            </Link>
           </Typography>
         </ExpansionPanelDetails>
         <ExpansionPanelActions>

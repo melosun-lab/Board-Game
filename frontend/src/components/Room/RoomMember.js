@@ -3,7 +3,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Button from "@material-ui/core/Button";
 import { Mutation } from "react-apollo";
 import { gql } from "apollo-boost";
-import { Query } from 'react-apollo';
 import List from "@material-ui/core/List";
 import { UserContext} from "../../Root";
 const RoomMember = ({ classes, roomdata }) => {
@@ -60,10 +59,6 @@ const RoomMember = ({ classes, roomdata }) => {
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
   };
-  const send = () => {
-    var dataImg = canvasRef.current.toDataURL('image/png');
-    console.log(JSON.stringify(dataImg));
-  }
   const restore = (drawing) => {
     if(!drawing){
       clearCanvas();
@@ -179,15 +174,6 @@ const UPDATE_DRAWING_MUTATION = gql `
       }
     }
   }
-`
-
-const ROOM_CONTENT_QUERY = gql`
-query ($id: Int!){
-  roomid(id: $id){
-      id
-      content
-  }
-}
 `
 
 
